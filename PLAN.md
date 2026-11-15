@@ -1,67 +1,94 @@
-# DALI-1 Web Development & Coding Assistant: Master Plan & Execution Roadmap
+# DALI-1 Autonomous Agentic Intelligence: Master Architecture & Execution Plan
 
-> **Target Model:** DALI-1 Sub-Quadratic Causal Neural Architecture with Bounded Memory & Adaptive Compute  
-> **Specialization:** Full-Stack Web Development, Modern Frameworks, Official Documentation, and Real-World Debugging  
+> **System:** DALI-1 Agentic Software Engineering Engine  
+> **Objective:** Eliminate all fragile regex/hardcoded `if-else` rules and replace them with a **Robust, Universal Semantic Intent & Self-Correcting ReAct Tool Calling Architecture**.  
 > **Target Environment:** Local Apple Silicon Mac (16GB RAM) + 4-Bit INT4 Deployment  
 > **Status:** IN PROGRESS (Step-by-Step Verified Execution)
 
 ---
 
-## 1. Project Objectives
-1. **Official Stack Documentation:** Cover core standards and APIs for HTML5, CSS3, Modern JavaScript (ES2024), TypeScript, React 19, Next.js 15, Python, FastAPI, Flask, SQL, MongoDB, Git, and Docker.
-2. **Real-World Debugging Mastery:** Train the model on Tri-Part Debugging Tuples:
-   - **Broken Code & Stack Trace / Error Message**
-   - **Root Cause Analysis (Under-the-hood explanation)**
-   - **Minimal, Production-Ready Corrected Code**
-3. **Local Feasibility & High Throughput:** Optimize tokenization, chunked state training, and 4-bit INT4 quantization for local Mac development with zero memory leaks.
+## 1. The Core Engineering Challenge
+
+### Why Hardcoded Regex & `if-else` Fails in the Real World:
+1. **Infinite Linguistic Variations:** Users express intents in English, Hindi, Hinglish, with typos (`analys`, `anlyze`), grammatical inversions, and multi-clause instructions (*"make a portfolio website for a developer, save all files in ATUL folder"*).
+2. **Keyword Collisions:** A sentence like *"save files in ATUL folder"* contains `"make"` and `"folder"`, tricking simple string matchers into creating an empty folder instead of building the requested website.
+3. **Lack of Feedback/Reflexion:** Without self-verification, an agent declares success even when the user's primary goal was completely missed.
 
 ---
 
-## 2. Step-by-Step Execution Plan
+## 2. The 5-Layer Universal Solution Architecture
 
-| Step | Phase Description | Key Deliverables | Verification Gate | Status |
+```mermaid
+flowchart TD
+    A["User Natural Language Input (Any Phrasing / Hindi / English / Typos)"] --> B["Layer 1: Semantic Embedding Intent Router (Zero-Regex Vector Similarity)"]
+    B --> C["Layer 2: Structured Parameter Extraction Engine (JSON Action Schema)"]
+    C --> D["Layer 3: Autonomous Tool Execution Pipeline (Filesystem, Web Builder, Analyzer)"]
+    D --> E["Layer 4: Reflexion & Self-Correction Loop (Auto-Verification Gate)"]
+    E -->|Goal Verified| F["Verified Output & Artifact Delivered to User"]
+    E -->|Goal Discrepancy Detected| G["Auto-Correct Action & Re-Execute"]
+    G --> D
+    H["Layer 5: Native 1B Trajectory Dataset & ReAct SFT"] -.-> B
+```
+
+---
+
+## 3. Step-by-Step Execution Plan
+
+| Phase | Milestone | Deliverables | Verification Gate | Status |
 | :---: | :--- | :--- | :--- | :---: |
-| **Step 1** | **Master Blueprint & Architecture Plan** | `PLAN.md` creation with phases & verification metrics | Schema & roadmap approval | **COMPLETED** |
-| **Step 2** | **Data Acquisition & Synthesis Engine** | `data_pipeline/collector.py` & `data_pipeline/debugging_generator.py` | Generates 100+ rich multi-stack documentation and debugging pairs | **COMPLETED** |
-| **Step 3** | **Data Cleaning, Deduplication & Validation** | `data_pipeline/cleaner.py` and `data/final_coding_corpus.txt` | MinHash deduplication, formatting validation, 0 syntax corruption | **COMPLETED** |
-| **Step 4** | **Code-Preserving BPE Tokenizer** | `train_code_tokenizer.py` $\to$ `checkpoints/code_bpe.json` | Exact whitespace, 2/4-space indentations, and code operators preserved | **COMPLETED** |
-| **Step 5** | **Tokenizer Round-Trip Verification** | `tests/test_code_tokenizer.py` | 100% exact string reconstruction on complex multi-language code | **COMPLETED** |
-| **Step 6** | **Chunked State Model Pre-Training & SFT** | `train_coder.py` $\to$ `checkpoints/dali1_coder_fp32.pt` | Loss `0.0268`, Perplexity `1.03`, zero OOM on Mac | **COMPLETED** |
-| **Step 7** | **4-Bit INT4 Quantization Engine** | `checkpoints/dali1_coder_int4.pt` | 5.9x compression, 9.0 MB footprint, 0.998 cosine fidelity | **COMPLETED** |
-| **Step 8** | **Interactive Terminal & Debugging Evaluation** | `chat.py` with multi-stack debugging tests | Pass live bug diagnosis on CORS, async race, React hooks, FastAPI | **COMPLETED** |
+| **Phase 1** | **Universal Architecture Blueprint** | Updated `PLAN.md` with 5-Layer Specification | Full architectural approval & scope freeze | **IN PROGRESS** |
+| **Phase 2** | **Semantic Embedding Intent Router** | `dali/router.py` (Vector Cosine Similarity, Zero-Regex) | Classifies 20+ diverse English/Hindi/typo prompts with 100% precision | **PENDING** |
+| **Phase 3** | **Structured Parameter & Schema Extractor** | `dali/parameters.py` (JSON Action Schema + Path Normalizer) | Accurately extracts `target_dir`, `tech_stack`, `action_type` without hardcoding | **PENDING** |
+| **Phase 4** | **Autonomous Reflexion & Self-Correction Engine** | `dali/reflexion.py` (Self-Audit & Discrepancy Detector) | Detects empty folder mistakes and auto-corrects by generating website code | **PENDING** |
+| **Phase 5** | **Agent Integration & CLI Verification** | Upgraded `dali_code.py` running on Router + Reflexion | Passes live interactive test on complex real-world prompts | **PENDING** |
+| **Phase 6** | **Agentic ReAct Trajectory Dataset** | `data/agentic_react_corpus.jsonl` (Thought $\to$ Call $\to$ Response $\to$ Final) | 500+ multi-step trajectories across web, backend, and debugging | **PENDING** |
+| **Phase 7** | **1B Architecture SFT Specification** | `dali/scale_1b.py` training harness & INT4 validation | Zero OOM on 16GB Mac, <550MB footprint | **PENDING** |
 
 ---
 
-## 3. Detailed Data Architecture (The Tri-Part Debugging Schema)
+## 4. Detailed Component Specifications
 
-Every debugging sample in the training corpus follows this standard format:
-```markdown
-<|system|>
-You are DALI-1, an expert Software Engineer and Full-Stack Web Development Assistant.
-<|user|>
-My code failed with the following error:
-[Error Trace / Bug Description]
-```[language]
-[Broken Code]
-```
-How do I fix this?
-<|assistant|>
-### Root Cause:
-[Concise explanation of the underlying runtime/compiler failure]
+### Layer 1: Semantic Embedding Intent Router (`dali/router.py`)
+- Defines mathematical Anchor Vectors for the 6 core agent actions:
+  - `ACTION_BUILD_WEB`: Creating websites, portfolios, landing pages, full-stack applications.
+  - `ACTION_ANALYZE`: Codebase scanning, architecture maps, dependency auditing.
+  - `ACTION_PLAN`: Deliberative multi-step planning, Chain-of-Thought reasoning.
+  - `ACTION_FILESYSTEM`: Pure folder/file creation, reading, writing, listing.
+  - `ACTION_TERMINAL`: Running shell commands, git operations, builds.
+  - `ACTION_KNOWLEDGE`: Technical documentation, API specs, debugging assistance.
+- Uses normalized TF-IDF / Subword Character n-gram vector embeddings to compute Cosine Similarity:
+  $$\text{Sim}(Q, A_k) = \frac{\mathbf{v}_Q \cdot \mathbf{v}_{A_k}}{\|\mathbf{v}_Q\| \|\mathbf{v}_{A_k}\|}$$
+- Zero dependency on exact keywords or word order. Typos like `analys` or Hindi `bnao` map directly to the correct semantic cluster.
 
-### Solution:
-```[language]
-[Clean, modern, corrected production code]
-```
+### Layer 2: Structured Parameter Extractor (`dali/parameters.py`)
+- Emits a standardized JSON payload:
+  ```json
+  {
+    "action": "BUILD_WEBSITE",
+    "confidence": 0.94,
+    "parameters": {
+      "topic": "portfolio for web developer",
+      "target_folder": "ATUL",
+      "framework": "Tailwind + HTML5",
+      "mode": "frontend_only"
+    }
+  }
+  ```
 
-### Best Practices & Prevention:
-[1-2 bullet points to prevent this issue in production]
-```
+### Layer 3: Reflexion & Self-Correction Engine (`dali/reflexion.py`)
+- Before reporting completion to the user, the agent runs an internal audit:
+  1. *What was the user's primary goal?* (e.g. `BUILD_WEBSITE`)
+  2. *What action was executed?* (e.g. `mkdir ATUL`)
+  3. *Audit Check:* Does the folder contain `index.html`? Is `index.html` non-empty?
+  4. *If Audit Fails:* Trigger immediate self-correction without waiting for the user to complain!
 
 ---
 
-## 4. Verification Checkpoints
-- **Gate 1:** Data Pipeline outputs non-empty, high-signal, diverse debugging and API samples.
-- **Gate 2:** Tokenizer preserves indentation and tokenizes code efficiently without splitting operators.
-- **Gate 3:** Training loss converges with chunked state passing.
-- **Gate 4:** Autoregressive output produces valid, syntactically correct code and accurate root-cause diagnoses.
+## 5. Verification Matrix
+- **Test Set:** 25 diverse real-world prompts:
+  - *"make a portfolio website for a web developer, save all the file in ATUL folder"*
+  - *"analys this project"*
+  - *"kya kya files hai is folder me"*
+  - *"fastapi me redis cache kaise lagaye step by step"*
+  - *"create folder named BACKUP"*
+- **Target:** 100% correct tool execution, 0% empty folder false-positives, 0% hallucinations.
