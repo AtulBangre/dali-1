@@ -8,14 +8,17 @@ def slugify(text: str) -> str:
     text = re.sub(r"[^\w\s-]", "", text)
     return re.sub(r"[-\s]+", "_", text)[:35] or "fullstack_app"
 
-def generate_fullstack_project(user_prompt: str, output_base: str = "generated_projects"):
+def generate_fullstack_project(user_prompt: str, output_base: str = "generated_projects", direct_folder: str = None):
     print("=" * 76)
     print("  DALI-1 AUTONOMOUS FULL-STACK SOFTWARE PROJECT GENERATOR")
     print("=" * 76)
     print(f"✓ Natural Language Prompt: '{user_prompt}'")
 
-    project_slug = slugify(user_prompt)
-    project_dir = os.path.join(output_base, project_slug)
+    if direct_folder:
+        project_dir = direct_folder
+    else:
+        project_slug = slugify(user_prompt)
+        project_dir = os.path.join(output_base, project_slug)
     frontend_dir = os.path.join(project_dir, "frontend")
     backend_dir = os.path.join(project_dir, "backend")
 

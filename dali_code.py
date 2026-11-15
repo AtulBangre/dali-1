@@ -3,7 +3,7 @@ import sys
 import subprocess
 import json
 import re
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 
 from chat import load_assistant, generate_response
 from dali.analyzer import ProjectAnalyzer
@@ -109,8 +109,17 @@ class DALICodeAgent:
             return "No local documentation match found."
         return "\n---\n".join([item[1] for item in top])
 
+    def _extract_target_folder(self, prompt: str) -> Optional[str]:
+        """Extracts destination folder if specified (e.g. save in ATUL folder, inside portfolio, etc.)"""
+        m = re.search(r'(?:save\s+(?:all\s+)?(?:the\s+)?files?\s+(?:in|inside|to)|inside|into|in)\s+(?:this\s+)?(?:folder\s+|directory\s+)?([A-Za-z0-9_.-]+)(?:\s+folder|\s+directory)?', prompt, re.I)
+        if m:
+            val = m.group(1).strip()
+            if val.lower() not in ['this', 'a', 'an', 'the', 'folder', 'directory', 'current', 'working']:
+                return val
+        return None
+
     def _extract_name(self, text: str, is_folder: bool = True) -> str:
-        """Extracts target folder or file name from natural language instruction."""
+        """Extracts target folder or file name from pure folder/file creation instructions."""
         words = text.split()
         stop_words = {
             "make", "create", "mkdir", "bnao", "bnana", "a", "an", "the",
@@ -166,7 +175,7 @@ Phase 4: Risk Mitigation & Edge Cases
         return thinking_plan
 
     def execute_instruction(self, user_prompt: str) -> str:
-        """Agentic Execution Loop with Robust Natural Language Intent Dispatching"""
+        """Agentic Execution Loop with Priority-Based Natural Language Intent Dispatching"""
         prompt_trimmed = user_prompt.strip()
         if not prompt_trimmed:
             return ""
@@ -202,8 +211,29 @@ Phase 4: Risk Mitigation & Edge Cases
             q = prompt_trimmed[8:].strip()
             return f"[RAG Knowledge Results for '{q}']:\n" + self.search_knowledge(q)
 
-        # 2. Intent: Project Analysis & Architecture Crawling
-        # Handles: "analys this project", "analyse project", "analyze codebase", "scan project", "project structure", "architecture map"
+        # 2. PRIORITY 1: Autonomous Website / Full-Stack Project Generator
+        # Matches: "make a portfolio website for a web developer, save all the file in ATUL folder",
+        #          "create a modern portfolio website inside this portfolio folder", "build fullstack app"
+        web_nouns = ["website", "portfolio", "landing page", "web app", "fullstack", "full-stack", "frontend", "backend"]
+        web_verbs = ["make", "create", "build", "generate", "develop", "bnao", "design", "start"]
+        is_web_build = any(n in prompt_lower for n in web_nouns) and any(v in prompt_lower for v in web_verbs)
+
+        if is_web_build:
+            target_folder = self._extract_target_folder(prompt_trimmed)
+            # Full-Stack App vs Frontend Website
+            if any(k in prompt_lower for k in ["fullstack", "full-stack", "backend", "api", "database", "fastapi"]):
+                from build_fullstack_app import generate_fullstack_project
+                proj_dir = generate_fullstack_project(prompt_trimmed, direct_folder=target_folder)
+                folder_used = target_folder or proj_dir
+                return f"✓ Full-stack project generated successfully!\n  Target Directory: {os.path.abspath(folder_used)}\n  Run './run.sh' inside the directory to launch."
+            else:
+                from build_app import build_website_from_prompt
+                index_path = build_website_from_prompt(prompt_trimmed, direct_folder=target_folder)
+                folder_used = target_folder or os.path.dirname(index_path)
+                return f"✓ Built modern responsive website successfully!\n  Directory: {os.path.abspath(folder_used)}\n  Entrypoint: {os.path.abspath(index_path)}\n  Preview: file://{os.path.abspath(index_path)}"
+
+        # 3. PRIORITY 2: Project Architecture Analysis & Deep Research
+        # Matches: "analys this project", "analyse project", "analyze codebase", "scan project", "project structure", "architecture map"
         has_analyze_stem = bool(re.search(r"analy[sz]", prompt_lower))
         has_project_kw = any(w in prompt_lower for w in ["project", "codebase", "repo", "architecture", "directory tree", "dependencies"])
         has_scan_kw = any(w in prompt_lower for w in ["scan", "audit", "inspect", "overview", "structure"]) and has_project_kw
@@ -212,14 +242,14 @@ Phase 4: Risk Mitigation & Edge Cases
         if has_analyze_stem or has_scan_kw or has_hindi_inspect:
             return self.analyzer.generate_project_cognitive_map()
 
-        # 3. Intent: Deliberative Planning & Thinking (Chain-of-Thought)
-        # Handles: "plan how to add redis", "think about login", "kaise implement kare", "deep research on auth", "design architecture"
+        # 4. PRIORITY 3: Deliberative Planning & Thinking (Chain-of-Thought)
+        # Matches: "plan how to add redis", "think about login", "kaise implement kare", "deep research on auth", "design architecture"
         has_plan_kw = bool(re.search(r"\b(plan|think|strategy|kaise|how to|design|approach|steps|roadmap)\b", prompt_lower))
-        if has_plan_kw and not any(w in prompt_lower for w in ["make", "create", "build", "website", "folder"]):
+        if has_plan_kw:
             return self._generate_cot_plan(prompt_trimmed)
 
-        # 4. Intent: Folder / Directory Operations (Make / Create / Mkdir)
-        # Handles: "make a folder name ATUL in this current working directory", "mkdir test", "create directory components"
+        # 5. PRIORITY 4: Pure Folder / Directory Operations (Make / Create / Mkdir)
+        # ONLY reaches here if NOT a website or app building task!
         if any(w in prompt_lower for w in ["folder", "directory", "dir", "mkdir"]):
             if any(w in prompt_lower for w in ["make", "create", "mkdir", "bnao", "bnana", "generate", "add"]):
                 folder_name = self._extract_name(prompt_trimmed, is_folder=True)
@@ -231,7 +261,7 @@ Phase 4: Risk Mitigation & Edge Cases
                     except Exception as e:
                         return f"Error creating folder '{folder_name}': {e}"
 
-        # 5. Intent: File Operations (Create / Write / Edit)
+        # 6. PRIORITY 5: File Operations (Create / Write / Edit)
         # Handles: "create file test.py", "write index.html", "touch server.js"
         if any(w in prompt_lower for w in ["file", "touch"]) and any(w in prompt_lower for w in ["create", "make", "write", "add", "bnao"]):
             file_name = self._extract_name(prompt_trimmed, is_folder=False)
@@ -245,17 +275,17 @@ Phase 4: Risk Mitigation & Edge Cases
                 except Exception as e:
                     return f"Error creating file '{file_name}': {e}"
 
-        # 6. Intent: List Files / Directory Contents
+        # 7. PRIORITY 6: List Files / Directory Contents
         if any(w in prompt_lower for w in ["list files", "show files", "what files", "ls", "dir", "show directory", "directory contents", "files dikhao"]):
             return self._list_directory()
 
-        # 7. Intent: Read / View File
+        # 8. PRIORITY 7: Read / View File
         read_match = re.search(r"(?:read|view|show|open|cat)\s+(?:file\s+)?([A-Za-z0-9_./\\-]+\.[a-zA-Z0-9]+)", prompt_trimmed, re.I)
         if read_match:
             filepath = read_match.group(1).strip()
             return f"[File: {filepath}]\n" + self.read_file(filepath)
 
-        # 8. Intent: Delete / Remove File or Folder
+        # 9. PRIORITY 8: Delete / Remove File or Folder
         del_match = re.search(r"(?:delete|remove|rm)\s+(?:(?:folder|directory|file)\s+)?([A-Za-z0-9_.-]+)", prompt_trimmed, re.I)
         if del_match and any(w in prompt_lower for w in ["delete", "remove", "rm", "hatao"]):
             target = del_match.group(1).strip()
@@ -269,13 +299,6 @@ Phase 4: Risk Mitigation & Edge Cases
             else:
                 return f"Error: '{target}' not found."
 
-        # 9. Intent: Autonomous Website / Full-Stack Project Generator
-        if any(w in prompt_lower for w in ["website", "fullstack", "frontend", "backend", "full-stack", "web app"]):
-            if any(w in prompt_lower for w in ["build", "create", "make", "bnao", "generate", "start"]):
-                from build_fullstack_app import generate_fullstack_project
-                proj_dir = generate_fullstack_project(prompt_trimmed)
-                return f"✓ Full-stack project generated at: {proj_dir}"
-
         # 10. Technical Questions & Knowledge Retrieval via RAG
         rag_match = self.search_knowledge(prompt_trimmed)
         if rag_match and rag_match != "No local documentation match found.":
@@ -284,6 +307,7 @@ Phase 4: Risk Mitigation & Edge Cases
         # Fallback guidance when command is ambiguous
         return f"""DALI-Code Assistant Ready.
 Aap ye actions perform kar sakte hain:
+- Website banayein: 'make a portfolio website for a developer, save in ATUL folder'
 - Project analyze karein: 'analys this project' ya '/analyze'
 - Step-by-step planning: 'plan how to add redis' ya '/think <task>'
 - File/Folder banayein: 'make a folder name <name>' ya 'create file <name>'

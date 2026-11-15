@@ -34,16 +34,19 @@ def slugify(text: str) -> str:
     text = re.sub(r"[^\w\s-]", "", text)
     return re.sub(r"[-\s]+", "_", text)[:30] or "my_website"
 
-def build_website_from_prompt(user_prompt: str, output_base: str = "generated_sites"):
+def build_website_from_prompt(user_prompt: str, output_base: str = "generated_sites", direct_folder: str = None):
     print("=" * 72)
     print("  DALI-1 AUTONOMOUS FRONTEND WEBSITE GENERATOR")
     print("=" * 72)
     print(f"✓ Natural Language Prompt: '{user_prompt}'")
 
-    project_slug = slugify(user_prompt)
-    project_dir = os.path.join(output_base, project_slug)
+    if direct_folder:
+        project_dir = direct_folder
+    else:
+        project_slug = slugify(user_prompt)
+        project_dir = os.path.join(output_base, project_slug)
     os.makedirs(project_dir, exist_ok=True)
-    print(f"✓ Created Project Directory: {project_dir}/")
+    print(f"✓ Target Project Directory: {project_dir}/")
 
     # Load 4-bit INT4 DALI-1 Model
     print("✓ Loading DALI-1 4-bit Neural Engine...")
