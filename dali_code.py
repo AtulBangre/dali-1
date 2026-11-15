@@ -18,8 +18,14 @@ class DALICodeAgent:
     Powered by Zero-Regex Semantic Embedding Intent Routing,
     Deliberative CoT Planning, and Autonomous Self-Correction Reflexion.
     """
-    def __init__(self, model_path: str = "checkpoints/dali1_coder_int4.pt"):
-        print("✓ Initializing DALI-Code Agentic Engine...")
+    def __init__(self, model_path: str = None):
+        if model_path is None:
+            # Auto-detect best available model: 1B INT4 if present, else 14M INT4
+            if os.path.exists("checkpoints/dali1_1b_int4.pt"):
+                model_path = "checkpoints/dali1_1b_int4.pt"
+            else:
+                model_path = "checkpoints/dali1_coder_int4.pt"
+        print(f"✓ Initializing DALI-Code Agentic Engine with model: {model_path}...")
         self.model, self.tokenizer, self.config = load_assistant(model_path)
         self.knowledge_base_dir = "knowledge_base"
         self.analyzer = ProjectAnalyzer(".")
