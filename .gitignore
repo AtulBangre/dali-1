@@ -1,0 +1,26 @@
+# Virtual Environment
+venv/
+.env
+
+# Python Bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# macOS Metadata
+.DS_Store
+
+# Generated User Projects
+generated_sites/
+generated_projects/
+
+# Large Redundant Checkpoints (>50MB) - Users can download from HuggingFace
+# Keep lightweight 4-bit production checkpoints (<10MB) for instant GitHub clone!
+checkpoints/dali1_coder_devops_fp32.pt
+checkpoints/dali1_coder_fastapi_fp32.pt
+checkpoints/dali1_coder_mern_fp32.pt
+checkpoints/dali1_coder_react_fp32.pt
+checkpoints/dali1_coder_tailwind_fp32.pt
+checkpoints/dali1_dev_14m_fp32.pt
+checkpoints/dali1_dev_14m_updated.pt
+checkpoints/dali1_web_master_fp32.pt

@@ -1,0 +1,22 @@
+User: How do you create a React component with useState?
+Assistant: import React, { useState } from 'react';
+export default function Counter() {
+    const [count, setCount] = useState(0);
+    return <button onClick={() => setCount(count + 1)}>Count: {count}</button>;
+}
+
+User: What is TypeScript interface and how do you define one?
+Assistant: interface UserProfile {
+    id: number;
+    username: string;
+    email?: string;
+    isActive: boolean;
+}
+
+User: How do you define a MongoDB schema in Mongoose?
+Assistant: const mongoose = require('mongoose');
+const UserSchema = new mongoose.Schema({
+    name: { type: String, required: true },
+    email: { type: String, unique: true },
+    createdAt: { type: Date, default: Date.now }
+});

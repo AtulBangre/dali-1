@@ -1,0 +1,102 @@
+<|system|>
+You are DALI-1, an expert High-Performance Backend Architect specializing in Python, FastAPI, and PostgreSQL.
+<|user|>
+Write a production-grade FastAPI application with Pydantic v2 schemas, async SQLAlchemy PostgreSQL session management, and OAuth2 JWT authentication.
+<|assistant|>
+```python
+# database.py
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+import os
+
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:secret@localhost:5432/production_db")
+
+engine = create_async_engine(DATABASE_URL, pool_size=20, max_overflow=10, pool_pre_ping=True)
+AsyncSessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+class Base(DeclarativeBase):
+    pass
+
+class UserModel(Base):
+    __tablename__ = "users"
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    email: Mapped[str] = mapped_column(unique=True, index=True, nullable=False)
+    hashed_password: Mapped[str] = mapped_column(nullable=False)
+    is_active: Mapped[bool] = mapped_column(default=True)
+
+# Dependency to yield async DB session
+async def get_db():
+    async with AsyncSessionLocal() as session:
+        try:
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
+```
+
+```python
+# main.py
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from pydantic import BaseModel, EmailStr, Field
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from typing import Annotated
+from database import get_db, UserModel
+
+app = FastAPI(title="Production FastAPI Service", version="1.0.0")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=8, description="Minimum 8 characters")
+
+class UserResponse(BaseModel):
+    id: int
+    email: EmailStr
+    is_active: bool
+
+    class Config:
+        from_attributes = True
+
+@app.post("/users", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+async def create_user(payload: UserCreate, db: Annotated[AsyncSession, Depends(get_db)]):
+    existing = await db.execute(select(UserModel).where(UserModel.email == payload.email))
+    if existing.scalar_one_or_none():
+        raise HTTPException(status_code=400, detail="Email already registered")
+
+    new_user = UserModel(email=payload.email, hashed_password=f"hashed_{payload.password}")
+    db.add(new_user)
+    await db.flush()
+    await db.refresh(new_user)
+    return new_user
+```
+<|end_block|>
+<|system|>
+You are DALI-1, an expert High-Performance Backend Architect specializing in Python, FastAPI, and PostgreSQL.
+<|user|>
+How do you write safe PostgreSQL migrations, indexes, and avoid the N+1 query problem in SQLAlchemy?
+<|assistant|>
+### Avoiding N+1 Query Problem in SQLAlchemy Async:
+When querying a parent model with related children, default lazy loading triggers $N$ additional SQL queries, crashing production performance.
+
+### Solution: Use `selectinload` or `joinedload`:
+```python
+from sqlalchemy.orm import selectinload
+from sqlalchemy import select
+
+async def get_users_with_orders(db: AsyncSession):
+    # Executes exactly TWO queries regardless of user count:
+    # Query 1: SELECT * FROM users;
+    # Query 2: SELECT * FROM orders WHERE user_id IN (...);
+    stmt = select(UserModel).options(selectinload(UserModel.orders)).where(UserModel.is_active == True)
+    result = await db.execute(stmt)
+    return result.scalars().all()
+```
+
+### PostgreSQL Indexing Best Practices:
+1. Use `B-Tree` (default) for equality and range queries (`=`, `<`, `>`, `BETWEEN`).
+2. Use `GIN` (Generalized Inverted Index) for JSONB, array columns, and full-text search.
+3. Always create foreign key indexes to prevent table-level locks during parent deletions.
+```

@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dali1-neural-architecture"
+version = "1.0.0"
+description = "DALI-1: Dynamic Adaptive Latent Interface - Sub-Quadratic Causal Architecture with Bounded Memory and Adaptive Computation"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+    { name = "DALI-1 Research Team" }
+]
+keywords = [
+    "deep-learning",
+    "neural-networks",
+    "recurrent-memory",
+    "adaptive-computation",
+    "sub-quadratic",
+    "quantization",
+    "int4"
+]
+dependencies = [
+    "torch>=2.0.0",
+    "numpy>=1.22.0"
+]
+
+[project.urls]
+Homepage = "https://github.com/dali-ai/dali-1"
+Repository = "https://github.com/dali-ai/dali-1"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["dali*"]

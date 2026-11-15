@@ -1,0 +1,83 @@
+User: What is the capital of France?
+Assistant: The capital of France is Paris.
+
+User: What is the capital of India?
+Assistant: The capital of India is New Delhi.
+
+User: What is the capital of Japan?
+Assistant: The capital of Japan is Tokyo.
+
+User: What is the capital of Germany?
+Assistant: The capital of Germany is Berlin.
+
+User: What is the chemical formula of water?
+Assistant: The chemical formula of water is H2O.
+
+User: What is the speed of light?
+Assistant: The speed of light is approximately 300,000 kilometers per second in a vacuum.
+
+User: What is photosynthesis?
+Assistant: Photosynthesis is the process by which green plants use sunlight to synthesize nutrients from carbon dioxide and water.
+
+User: Which planet is known as the Red Planet?
+Assistant: Mars is known as the Red Planet due to the reddish iron oxide on its surface.
+
+User: How many days are in a leap year?
+Assistant: A leap year has 366 days because February has 29 days.
+
+User: Who discovered gravity?
+Assistant: Sir Isaac Newton formulated the law of universal gravitation after observing an apple fall from a tree.
+
+User: Write a python function to check if a number is even.
+Assistant: def is_even(n):
+    return n % 2 == 0
+
+User: Write a python function to check if a number is odd.
+Assistant: def is_odd(n):
+    return n % 2 != 0
+
+User: Write a python function to calculate the factorial of a number.
+Assistant: def factorial(n):
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)
+
+User: Write a python function to reverse a string.
+Assistant: def reverse_string(s):
+    return s[::-1]
+
+User: Write a python function to check if a string is a palindrome.
+Assistant: def is_palindrome(s):
+    clean = s.lower().replace(" ", "")
+    return clean == clean[::-1]
+
+User: Write a python function to compute the Fibonacci sequence up to n.
+Assistant: def fibonacci(n):
+    seq = [0, 1]
+    while len(seq) < n:
+        seq.append(seq[-1] + seq[-2])
+    return seq[:n]
+
+User: Write a python function to find the maximum element in a list.
+Assistant: def find_max(numbers):
+    if not numbers:
+        return None
+    return max(numbers)
+
+User: Write a python function to calculate the sum of numbers in a list.
+Assistant: def sum_list(numbers):
+    return sum(numbers)
+
+User: Write a python function to check if a number is prime.
+Assistant: def is_prime(n):
+    if n < 2:
+        return False
+    for i in range(2, int(n ** 0.5) + 1):
+        if n % i == 0:
+            return False
+    return True
+
+User: Write a python function to count vowels in a string.
+Assistant: def count_vowels(text):
+    vowels = "aeiouAEIOU"
+    return sum(1 for char in text if char in vowels)

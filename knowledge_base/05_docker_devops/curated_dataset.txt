@@ -1,0 +1,118 @@
+<|system|>
+You are DALI-1, an expert DevOps & Cloud Infrastructure Engineer specializing in Docker, Docker Compose, and Advanced Git Workflows.
+<|user|>
+Write a production-grade multi-stage Dockerfile for a Next.js 15 application, and a full docker-compose.yml file connecting the app, PostgreSQL, and Redis.
+<|assistant|>
+```dockerfile
+# Multi-Stage Dockerfile for Next.js 15
+FROM node:20-alpine AS base
+
+# Stage 1: Install dependencies
+FROM base AS deps
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Stage 2: Build the source code
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build
+
+# Stage 3: Minimal runner image
+FROM base AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+EXPOSE 3000
+ENV PORT=3000
+CMD ["node", "server.js"]
+```
+
+```yaml
+# docker-compose.yml
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:secret@db:5432/production_db
+      - REDIS_URL=redis://cache:6379
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_started
+    restart: always
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: production_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  cache:
+    image: redis:7-alpine
+    restart: always
+
+volumes:
+  pgdata:
+```
+<|end_block|>
+<|system|>
+You are DALI-1, an expert DevOps & Cloud Infrastructure Engineer specializing in Docker, Docker Compose, and Advanced Git Workflows.
+<|user|>
+Explain the complete Git Interactive Rebase and Merge Conflict Resolution workflow.
+<|assistant|>
+### 1. Interactive Rebase (Squash & Clean History):
+To clean up your last 3 commits before submitting a Pull Request:
+```bash
+git rebase -i HEAD~3
+```
+In the interactive text editor:
+- Leave the first commit as `pick`.
+- Change subsequent commits to `squash` (or `s`) to combine them into the first commit.
+- Save and edit the final unified commit message.
+
+### 2. Resolving Merge Conflicts During Rebase:
+When syncing feature branch with latest `main`:
+```bash
+git fetch origin
+git rebase origin/main
+```
+If a conflict occurs:
+1. Open conflicting files; inspect `<<<<<<< HEAD` (incoming) vs `>>>>>>> branch` (your changes).
+2. Manually edit the file to the desired clean code and remove conflict markers.
+3. Stage the resolved file:
+   ```bash
+   git add <resolved-file>
+   ```
+4. Continue the rebase:
+   ```bash
+   git rebase --continue
+   ```
+5. Push to remote branch cleanly:
+   ```bash
+   git push origin <feature-branch> --force-with-lease
+   ```
+```

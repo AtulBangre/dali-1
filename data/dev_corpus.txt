@@ -1,0 +1,192 @@
+User: How do you create a virtual environment in Python?
+Assistant: Run `python -m venv venv` and activate it with `source venv/bin/activate` on macOS/Linux or `venv\Scripts\activate` on Windows.
+
+User: Write a Python function to reverse a string.
+Assistant: def reverse_string(s: str) -> str:
+    return s[::-1]
+
+User: How do you check if a key exists in a Python dictionary?
+Assistant: You can use the `in` operator: `if key in my_dict:` or `my_dict.get(key) is not None`.
+
+User: Write a Python list comprehension to filter even numbers from a list.
+Assistant: evens = [x for x in numbers if x % 2 == 0]
+
+User: Write a Python function to calculate the factorial of a number.
+Assistant: def factorial(n: int) -> int:
+    if n <= 1:
+        return 1
+    return n * factorial(n - 1)
+
+User: How do you read a file safely in Python?
+Assistant: with open("data.txt", "r", encoding="utf-8") as f:
+    content = f.read()
+
+User: Write a Python class for a Bank Account with deposit and withdraw methods.
+Assistant: class BankAccount:
+    def __init__(self, balance: float = 0.0):
+        self.balance = balance
+
+    def deposit(self, amount: float):
+        if amount > 0:
+            self.balance += amount
+
+    def withdraw(self, amount: float):
+        if 0 < amount <= self.balance:
+            self.balance -= amount
+            return True
+        return False
+
+User: How do you handle exceptions in Python?
+Assistant: try:
+    result = 10 / divisor
+except ZeroDivisionError:
+    result = 0
+finally:
+    print("Execution complete")
+
+User: What is a Python decorator and how do you write one?
+Assistant: def my_decorator(func):
+    def wrapper(*args, **kwargs):
+        print("Before function call")
+        res = func(*args, **kwargs)
+        print("After function call")
+        return res
+    return wrapper
+
+User: Write a binary search algorithm in Python.
+Assistant: def binary_search(arr, target):
+    low, high = 0, len(arr) - 1
+    while low <= high:
+        mid = (low + high) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            low = mid + 1
+        else:
+            high = mid - 1
+    return -1
+
+User: How do you make an HTTP GET request in Python using requests?
+Assistant: import requests
+response = requests.get("https://api.example.com/data")
+if response.status_code == 200:
+    data = response.json()
+
+User: What is the semantic structure of an HTML5 document?
+Assistant: <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Web App</title>
+</head>
+<body>
+    <header><nav></nav></header>
+    <main><section><article></article></section></main>
+    <footer></footer>
+</body>
+</html>
+
+User: How do you center a div horizontally and vertically using CSS Flexbox?
+Assistant: .container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+User: How do you create a responsive 3-column grid in CSS?
+Assistant: .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+}
+
+User: Write a CSS media query for mobile screens below 768px.
+Assistant: @media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        padding: 10px;
+    }
+}
+
+User: How do you fetch data asynchronously in JavaScript with async/await?
+Assistant: async function fetchData(url) {
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Fetch error:", error);
+    }
+}
+
+User: How do you add a click event listener to a button in JavaScript?
+Assistant: const btn = document.querySelector("#submit-btn");
+btn.addEventListener("click", (event) => {
+    event.preventDefault();
+    console.log("Button clicked!");
+});
+
+User: How do you map an array of numbers to their squares in JavaScript?
+Assistant: const numbers = [1, 2, 3, 4, 5];
+const squares = numbers.map(n => n * n);
+
+User: How do you filter active users from an array of objects in JavaScript?
+Assistant: const activeUsers = users.filter(user => user.isActive === true);
+
+User: Write a basic REST API endpoint in FastAPI with Python.
+Assistant: from fastapi import FastAPI
+app = FastAPI()
+
+@app.get("/items/{item_id}")
+def read_item(item_id: int):
+    return {"item_id": item_id, "status": "active"}
+
+@app.post("/items")
+def create_item(payload: dict):
+    return {"message": "Created", "data": payload}
+
+User: Write a simple Flask route that returns JSON.
+Assistant: from flask import Flask, jsonify, request
+app = Flask(__name__)
+
+@app.route("/api/hello", methods=["GET"])
+def hello():
+    return jsonify({"message": "Hello World", "code": 200})
+
+User: What are standard HTTP response status codes?
+Assistant: 200 OK: Request succeeded.
+201 Created: Resource created successfully.
+400 Bad Request: Invalid client payload.
+401 Unauthorized: Authentication required.
+403 Forbidden: Permissions missing.
+404 Not Found: Resource does not exist.
+500 Internal Server Error: Server crashed.
+
+User: How do you select users who registered after 2024 in SQL?
+Assistant: SELECT id, username, email FROM users WHERE created_at >= '2024-01-01' ORDER BY created_at DESC;
+
+User: Write an SQL query to count total orders per customer using GROUP BY.
+Assistant: SELECT customer_id, COUNT(id) AS total_orders, SUM(amount) AS total_spent FROM orders GROUP BY customer_id;
+
+User: Write an SQL INNER JOIN between users and orders table.
+Assistant: SELECT users.username, orders.order_id, orders.amount FROM users INNER JOIN orders ON users.id = orders.user_id;
+
+User: What are essential Git commands for version control?
+Assistant: git init - Initialize repository
+git status - Check modified files
+git add . - Stage all changes
+git commit -m "feat: message" - Save snapshot
+git branch feature - Create branch
+git checkout -b feature - Create and switch
+git pull origin main - Fetch and merge
+git push origin main - Upload commits
+
+User: Write a clean Dockerfile for a Python web application.
+Assistant: FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]

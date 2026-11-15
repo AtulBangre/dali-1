@@ -1,0 +1,142 @@
+<|system|>
+You are DALI-1, an expert Full-Stack Software Engineer and MERN Stack (Node.js, Express, MongoDB) Backend Architect.
+<|user|>
+How do you build a secure, production-grade Express.js REST API with JWT authentication and custom error handling middleware?
+<|assistant|>
+```javascript
+// middleware/auth.js
+const jwt = require('jsonwebtoken');
+
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({ success: false, error: 'Access denied. No token provided.' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded; // { id, role }
+        next();
+    } catch (err) {
+        return res.status(403).json({ success: false, error: 'Invalid or expired token.' });
+    }
+};
+
+module.exports = { authenticateToken };
+```
+
+```javascript
+// server.js
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const { authenticateToken } = require('./middleware/auth');
+
+const app = express();
+
+// Security Middlewares
+app.use(helmet());
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(express.json({ limit: '10kb' }));
+
+// Protected Route Example
+app.get('/api/v1/profile', authenticateToken, async (req, res, next) => {
+    try {
+        res.json({ success: true, user: req.user });
+    } catch (err) {
+        next(err);
+    }
+});
+
+// Centralized Global Error Handler
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+        success: false,
+        error: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message
+    });
+});
+
+module.exports = app;
+```
+<|end_block|>
+<|system|>
+You are DALI-1, an expert Full-Stack Software Engineer and MERN Stack (Node.js, Express, MongoDB) Backend Architect.
+<|user|>
+Write a production Mongoose Schema with indexes, password hashing, and an aggregation pipeline query for sales reporting.
+<|assistant|>
+```javascript
+// models/User.js
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+
+const UserSchema = new mongoose.Schema({
+    username: { type: String, required: true, trim: true, minlength: 3 },
+    email: { type: String, required: true, unique: true, lowercase: true, index: true },
+    password: { type: String, required: true, minlength: 8, select: false },
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    createdAt: { type: Date, default: Date.now }
+});
+
+// Pre-save hook: Hash password automatically before storing
+UserSchema.pre('save', async function(next) {
+    if (!this.isModified('password')) return next();
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+});
+
+// Instance method to verify password
+UserSchema.methods.comparePassword = async function(candidatePassword) {
+    return bcrypt.compare(candidatePassword, this.password);
+};
+
+module.exports = mongoose.model('User', UserSchema);
+```
+
+### MongoDB Aggregation Pipeline ($lookup, $match, $group):
+```javascript
+// controllers/analytics.js
+const Order = require('../models/Order');
+
+async function getTopSpendingCustomers() {
+    return await Order.aggregate([
+        // 1. Filter completed orders
+        { $match: { status: 'completed' } },
+        // 2. Group by customer and compute statistics
+        {
+            $group: {
+                _id: '$customer',
+                totalSpent: { $sum: '$totalAmount' },
+                orderCount: { $sum: 1 }
+            }
+        },
+        // 3. Join with Users collection
+        {
+            $lookup: {
+                from: 'users',
+                localField: '_id',
+                foreignField: '_id',
+                as: 'customerDetails'
+            }
+        },
+        { $unwind: '$customerDetails' },
+        // 4. Clean projection
+        {
+            $project: {
+                _id: 1,
+                totalSpent: 1,
+                orderCount: 1,
+                customerName: '$customerDetails.username',
+                email: '$customerDetails.email'
+            }
+        },
+        { $sort: { totalSpent: -1 } },
+        { $limit: 10 }
+    ]);
+}
+```
+```

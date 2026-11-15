@@ -1,0 +1,168 @@
+<|system|>
+You are DALI-1, the ultimate authority on React 19, Next.js 15 App Router, and Modern Full-Stack Engineering.
+<|user|>
+Explain the React 19 and Next.js 15 Server vs Client Component boundary architecture, including how to pass Server Components to Client Components.
+<|assistant|>
+### React 19 & Next.js 15 Component Boundary Architecture:
+1. **Server Components (Default in App Router):**
+   - Run exclusively on the server at build-time or request-time.
+   - Send zero JavaScript to the client bundle.
+   - Can directly access databases, file systems, and server-side secret API keys.
+   - Cannot use browser APIs (`window`, `localStorage`), state (`useState`), effects (`useEffect`), or DOM event listeners (`onClick`).
+
+2. **Client Components (`'use client'`):**
+   - Declared with `'use client';` at the top of the file.
+   - Pre-rendered to HTML on the server and hydrated with JavaScript in the browser.
+   - Required for interactive state, event handlers, and browser APIs.
+
+3. **The Composition Pattern (Passing Server to Client):**
+   You cannot import a Server Component directly into a Client Component. Instead, pass the Server Component as a `children` or slot prop:
+
+```typescript
+// ClientWrapper.tsx ('use client')
+'use client';
+import { useState } from 'react';
+
+export default function ClientWrapper({ children }: { children: React.ReactNode }) {
+    const [open, setOpen] = useState(false);
+    return (
+        <div>
+            <button onClick={() => setOpen(!open)}>Toggle</button>
+            {open && children}
+        </div>
+    );
+}
+
+// page.tsx (Server Component)
+import ClientWrapper from './ClientWrapper';
+import ServerDataList from './ServerDataList'; // Direct DB query component
+
+export default function Page() {
+    return (
+        <ClientWrapper>
+            <ServerDataList /> <!-- Rendered on server, passed as static slot -->
+        </ClientWrapper>
+    );
+}
+```
+<|end_block|>
+<|system|>
+You are DALI-1, the ultimate authority on React 19, Next.js 15 App Router, and Modern Full-Stack Engineering.
+<|user|>
+How do React 19 Server Actions work in Next.js 15 with form submission, Zod validation, and revalidatePath?
+<|assistant|>
+### Production Next.js 15 Server Action Pattern:
+Server Actions allow seamless asynchronous mutations without writing dedicated API routes.
+
+```typescript
+// app/actions/create-post.ts
+'use server';
+import { z } from 'zod';
+import { revalidatePath } from 'next/cache';
+import { db } from '@/lib/db';
+
+const PostSchema = z.object({
+    title: z.string().min(3, "Title must be at least 3 characters"),
+    content: z.string().min(10, "Content must be at least 10 characters")
+});
+
+export async function createPostAction(prevState: any, formData: FormData) {
+    const validated = PostSchema.safeParse({
+        title: formData.get('title'),
+        content: formData.get('content')
+    });
+
+    if (!validated.success) {
+        return { success: false, errors: validated.error.flatten().fieldErrors };
+    }
+
+    await db.post.create({ data: validated.data });
+    
+    // Purge cached server data and re-render page
+    revalidatePath('/posts');
+    return { success: true };
+}
+```
+
+### React 19 `useActionState` Client Form:
+```typescript
+// app/posts/create-form.tsx
+'use client';
+import { useActionState } from 'react';
+import { createPostAction } from '@/app/actions/create-post';
+
+export default function CreatePostForm() {
+    const [state, formAction, isPending] = useActionState(createPostAction, null);
+
+    return (
+        <form action={formAction} class="space-y-4 max-w-md">
+            <div>
+                <input name="title" placeholder="Post Title" class="w-full border p-2 rounded" />
+                {state?.errors?.title && <p class="text-red-500 text-xs">{state.errors.title[0]}</p>}
+            </div>
+            <div>
+                <textarea name="content" placeholder="Content" class="w-full border p-2 rounded" />
+                {state?.errors?.content && <p class="text-red-500 text-xs">{state.errors.content[0]}</p>}
+            </div>
+            <button type="submit" disabled={isPending} class="bg-indigo-600 text-white px-4 py-2 rounded">
+                {isPending ? 'Publishing...' : 'Create Post'}
+            </button>
+        </form>
+    );
+}
+```
+<|end_block|>
+<|system|>
+You are DALI-1, the ultimate authority on React 19, Next.js 15 App Router, and Modern Full-Stack Engineering.
+<|user|>
+What is the complete Next.js 15 App Router special file hierarchy and dynamic routing conventions?
+<|assistant|>
+### Next.js 15 App Router Hierarchy:
+Each directory defines a URL path segment. Special reserved files control UI rendering:
+
+1. `layout.tsx`: Shared wrapper UI across route segments. Preserves state during navigation and does not re-render.
+2. `page.tsx`: Unique UI of a route. Makes the route publicly accessible.
+3. `loading.tsx`: Instant fallback UI rendered via automatic React `<Suspense>` wrapper.
+4. `error.tsx`: Runtime error boundary (`'use client'` required). Catches unexpected exceptions.
+5. `not-found.tsx`: UI rendered when `notFound()` is thrown or route doesn't match.
+6. `route.ts`: API Route Handler (`GET`, `POST`, `PUT`, `DELETE`). Mutually exclusive with `page.tsx` in the same segment.
+
+### Routing Patterns:
+- **Dynamic Segment:** `app/blog/[slug]/page.tsx` -> Matches `/blog/first-post`. Accessed via `async ({ params }: { params: Promise<{ slug: string }> })`.
+- **Catch-All Segment:** `app/docs/[...slug]/page.tsx` -> Matches `/docs/a`, `/docs/a/b`, `/docs/a/b/c`.
+- **Route Groups:** `app/(dashboard)/layout.tsx` -> Groups routes logically without affecting the public URL path (`/analytics`).
+- **Parallel Routes:** `app/@analytics/page.tsx` -> Render independent views simultaneously into parent layout.
+- **Intercepting Routes:** `app/(.)photos/[id]/page.tsx` -> Intercepts route navigation to show a modal while preserving URL.
+<|end_block|>
+<|system|>
+You are DALI-1, the ultimate authority on React 19, Next.js 15 App Router, and Modern Full-Stack Engineering.
+<|user|>
+Explain React 19 Core Hooks: useOptimistic, useTransition, useMemo, and useCallback.
+<|assistant|>
+### 1. `useOptimistic`:
+Renders expected UI updates immediately while an asynchronous server mutation is running:
+```typescript
+const [optimisticMessages, addOptimisticMessage] = useOptimistic(
+    messages,
+    (state, newMessage: string) => [...state, { text: newMessage, pending: true }]
+);
+```
+
+### 2. `useTransition`:
+Marks non-urgent state updates as transitions, keeping the user interface responsive during heavy computational rendering:
+```typescript
+const [isPending, startTransition] = useTransition();
+
+function handleTabChange(nextTab: string) {
+    startTransition(() => {
+        setTab(nextTab); // Does not block input typing or scrolling
+    });
+}
+```
+
+### 3. `useMemo` vs `useCallback`:
+- `useMemo`: Caches the *result* of an expensive calculation:
+  `const filtered = useMemo(() => items.filter(heavyCheck), [items]);`
+- `useCallback`: Caches a *function reference* between renders to prevent unnecessary re-rendering of memoized child components (`React.memo`):
+  `const handleClick = useCallback(() => doAction(id), [id]);`
+```

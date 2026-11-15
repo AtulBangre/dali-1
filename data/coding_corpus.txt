@@ -1,0 +1,555 @@
+<|system|>
+You are DALI-1, an expert Software Engineer and Full-Stack Web Development Assistant.
+<|user|>
+Category: React / Next.js
+My code failed with the following error:
+Error: Hydration failed because the initial UI does not match what was rendered on the server.
+
+Broken Code:
+// app/page.tsx
+export default function Page() {
+    return (
+        <div>
+            <h1>Current Time: {new Date().toLocaleTimeString()}</h1>
+        </div>
+    );
+}
+
+How do I fix this?
+<|assistant|>
+### Root Cause:
+The server and client render different values because `new Date().toLocaleTimeString()` executes at two different timestamps, causing server-client HTML mismatch.
+
+### Solution:
+// app/page.tsx
+'use client';
+import { useEffect, useState } from 'react';
+
+export default function Page() {
+    const [time, setTime] = useState<string | null>(null);
+
+    useEffect(() => {
+        setTime(new Date().toLocaleTimeString());
+    }, []);
+
+    return (
+        <div>
+            <h1>Current Time: {time || 'Loading...'}</h1>
+        </div>
+    );
+}
+
+### Prevention:
+Never access dynamic, client-specific APIs (Date, window, localStorage) directly during server-side initial rendering. Defer them to `useEffect`.
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Software Engineer and Full-Stack Web Development Assistant.
+<|user|>
+Category: React Hooks
+My code failed with the following error:
+Error: Too many re-renders. React limits the number of renders to prevent an infinite loop.
+
+Broken Code:
+function UserCounter() {
+    const [count, setCount] = useState(0);
+    // Bug: Calling state updater directly in render phase
+    setCount(count + 1);
+    return <div>{count}</div>;
+}
+
+How do I fix this?
+<|assistant|>
+### Root Cause:
+Calling `setCount()` directly in the component body triggers a re-render before the current render completes, causing an infinite loop.
+
+### Solution:
+function UserCounter() {
+    const [count, setCount] = useState(0);
+
+    const increment = () => {
+        setCount(prev => prev + 1);
+    };
+
+    return <button onClick={increment}>Count: {count}</button>;
+}
+
+### Prevention:
+State setters must only be invoked inside event handlers or `useEffect` hooks with appropriate dependency arrays.
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Software Engineer and Full-Stack Web Development Assistant.
+<|user|>
+Category: JavaScript / Web APIs
+My code failed with the following error:
+Access to fetch at 'https://api.example.com/data' from origin 'http://localhost:3000' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present.
+
+Broken Code:
+// frontend/app.js
+async function getData() {
+    const res = await fetch("https://api.example.com/data");
+    const json = await res.json();
+    return json;
+}
+
+How do I fix this?
+<|assistant|>
+### Root Cause:
+The backend server does not include the `Access-Control-Allow-Origin` header in its HTTP response to authorize cross-origin browser requests.
+
+### Solution:
+# backend/main.py (FastAPI)
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+@app.get("/data")
+def get_data():
+    return {"status": "success", "data": [1, 2, 3]}
+
+### Prevention:
+Configure CORS middleware explicitly on the backend server for all allowed frontend domains.
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Software Engineer and Full-Stack Web Development Assistant.
+<|user|>
+Category: JavaScript / Async
+My code failed with the following error:
+TypeError: Cannot read properties of undefined (reading 'map')
+
+Broken Code:
+function UserList({ users }) {
+    return (
+        <ul>
+            {users.map(u => <li key={u.id}>{u.name}</li>)}
+        </ul>
+    );
+}
+
+How do I fix this?
+<|assistant|>
+### Root Cause:
+The `users` prop is undefined during the initial render before asynchronous data loading completes.
+
+### Solution:
+function UserList({ users = [] }) {
+    if (!users || users.length === 0) {
+        return <p>No users found.</p>;
+    }
+
+    return (
+        <ul>
+            {users.map(u => (
+                <li key={u.id}>{u.name}</li>
+            ))}
+        </ul>
+    );
+}
+
+### Prevention:
+Always provide default fallback values (`users = []`) or use optional chaining (`users?.map(...)`).
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Software Engineer and Full-Stack Web Development Assistant.
+<|user|>
+Category: Python / FastAPI
+My code failed with the following error:
+pydantic_core._pydantic_core.ValidationError: 1 validation error for Item price: Field required [type=missing]
+
+Broken Code:
+from fastapi import FastAPI
+from pydantic import BaseModel
+
+app = FastAPI()
+
+class Item(BaseModel):
+    name: str
+    price: float
+
+@app.post("/items")
+def create_item(item: Item):
+    return item
+
+How do I fix this?
+<|assistant|>
+### Root Cause:
+The client payload sent in the request body omitted the required `price` field.
+
+### Solution:
+from fastapi import FastAPI
+from pydantic import BaseModel
+from typing import Optional
+
+app = FastAPI()
+
+class Item(BaseModel):
+    name: str
+    price: Optional[float] = 0.0  # Default value or Optional
+
+@app.post("/items")
+def create_item(item: Item):
+    return {"status": "created", "item": item}
+
+### Prevention:
+Define optional fields with `Optional[T] = None` or provide sensible default values in Pydantic models.
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Software Engineer and Full-Stack Web Development Assistant.
+<|user|>
+Category: Python / Async
+My code failed with the following error:
+RuntimeError: Task <Task pending> got Future <Future pending> attached to a different loop
+
+Broken Code:
+import asyncio
+
+async def fetch_item():
+    return {"id": 1}
+
+def run_sync():
+    # Bug: Creating a new loop while one is already running
+    return asyncio.get_event_loop().run_until_complete(fetch_item())
+
+How do I fix this?
+<|assistant|>
+### Root Cause:
+`run_until_complete()` cannot be called when an event loop is already active in asynchronous frameworks like FastAPI or Jupyter.
+
+### Solution:
+import asyncio
+
+async def fetch_item():
+    return {"id": 1}
+
+async def run_proper():
+    result = await fetch_item()
+    return result
+
+### Prevention:
+In async environments, await coroutines directly instead of trying to synchronously block the running event loop.
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Software Engineer and Full-Stack Web Development Assistant.
+<|user|>
+Category: CSS / Layout
+My code failed with the following error:
+Layout Bug: Horizontal scrollbar appears on mobile screen and page shakes horizontally.
+
+Broken Code:
+.hero-section {
+    width: 100vw;
+    margin: 0;
+    padding: 20px;
+    box-sizing: content-box;
+}
+
+How do I fix this?
+<|assistant|>
+### Root Cause:
+`100vw` includes the width of the vertical scrollbar, and `box-sizing: content-box` adds padding onto 100vw, exceeding viewport width.
+
+### Solution:
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+.hero-section {
+    width: 100%;
+    max-width: 100%;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+### Prevention:
+Use `width: 100%` instead of `100vw`, set `box-sizing: border-box` globally, and ensure parents clip unintended overflow.
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Software Engineer and Full-Stack Web Development Assistant.
+<|user|>
+Category: SQL / Databases
+My code failed with the following error:
+OperationalError: FATAL: remaining connection slots are reserved for non-replication superuser connections
+
+Broken Code:
+# Bug: Creating a new database connection on every HTTP request without closing
+def get_user(user_id):
+    conn = psycopg2.connect(DB_URI)
+    cursor = conn.cursor()
+    cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
+    return cursor.fetchone()
+
+How do I fix this?
+<|assistant|>
+### Root Cause:
+Creating unpooled raw connections per request exhausts PostgreSQL `max_connections` limit.
+
+### Solution:
+from psycopg2 import pool
+
+connection_pool = pool.SimpleConnectionPool(minconn=1, maxconn=20, dsn=DB_URI)
+
+def get_user(user_id):
+    conn = connection_pool.getconn()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT id, name FROM users WHERE id = %s", (user_id,))
+            return cursor.fetchone()
+    finally:
+        connection_pool.putconn(conn)
+
+### Prevention:
+Always use connection pooling (SQLAlchemy engine, Prisma, or psycopg2 pool) with context managers to release connections.
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Software Engineer and Full-Stack Web Development Assistant.
+<|user|>
+Category: Docker / DevOps
+My code failed with the following error:
+Docker build takes 10+ minutes on every minor code change because `npm install` runs every time.
+
+Broken Code:
+FROM node:20
+WORKDIR /app
+COPY . .
+RUN npm install
+CMD ["npm", "start"]
+
+How do I fix this?
+<|assistant|>
+### Root Cause:
+`COPY . .` copies all source files before `RUN npm install`, invalidating Docker's layer cache on any file edit.
+
+### Solution:
+FROM node:20-alpine
+WORKDIR /app
+# 1. Copy package files first to leverage Docker layer caching
+COPY package*.json ./
+RUN npm ci --only=production
+
+# 2. Copy application source code after dependencies are installed
+COPY . .
+EXPOSE 3000
+CMD ["node", "server.js"]
+
+### Prevention:
+Separate dependency manifests (`package.json` / `requirements.txt`) from application code to preserve Docker build caching.
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Software Engineer and Full-Stack Web Development Assistant.
+<|user|>
+Category: Git / Version Control
+My code failed with the following error:
+error: failed to push some refs to 'origin/main'. Updates were rejected because the remote contains work that you do not have locally.
+
+Broken Code:
+# Attempting to force push blindly
+git push origin main
+
+How do I fix this?
+<|assistant|>
+### Root Cause:
+Remote branch has commits that your local branch lacks. A simple push is rejected to protect history.
+
+### Solution:
+# 1. Fetch remote changes and rebase local commits cleanly
+git fetch origin
+git rebase origin/main
+
+# 2. If there are merge conflicts, resolve them and continue:
+# git add <resolved-files>
+# git rebase --continue
+
+# 3. Push cleanly
+git push origin main
+
+### Prevention:
+Always pull or rebase before pushing (`git pull --rebase origin main`) and avoid using `--force` on shared branches.
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Software Engineer and Full-Stack Web Development Assistant.
+<|user|>
+Explain the React 19 Server Components paradigm and when to use 'use client'.
+<|assistant|>
+### React 19 Server Components vs Client Components:
+1. **Server Components (Default):**
+   - Execute strictly on the server and send zero JavaScript to the browser bundle.
+   - Ideal for direct database queries, backend API calls, and static content rendering.
+   - Cannot use browser hooks (`useState`, `useEffect`, `useContext`) or DOM event handlers (`onClick`).
+2. **Client Components ('use client'):**
+   - Declared by placing `'use client';` at the top of the file.
+   - Necessary whenever you need interactive event listeners (`onClick`, `onChange`), state management, browser APIs (`window`, `localStorage`), or custom React hooks.
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Software Engineer and Full-Stack Web Development Assistant.
+<|user|>
+How do discriminated unions work in TypeScript for robust type checking?
+<|assistant|>
+### Discriminated Unions in TypeScript:
+A discriminated union uses a shared literal property (the 'discriminant') to enable TypeScript to narrow down the exact type within conditional branches.
+
+```typescript
+type LoadingState = { status: 'loading' };
+type SuccessState = { status: 'success'; data: string[] };
+type ErrorState = { status: 'error'; message: string };
+
+type NetworkState = LoadingState | SuccessState | ErrorState;
+
+function handleState(state: NetworkState) {
+    switch (state.status) {
+        case 'loading':
+            return 'Loading...';
+        case 'success':
+            return `Data: ${state.data.join(', ')}`;
+        case 'error':
+            return `Failed: ${state.message}`;
+    }
+}
+```
+This guarantees compile-time exhaustiveness and prevents runtime property access errors.
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Software Engineer and Full-Stack Web Development Assistant.
+<|user|>
+How do you write a Next.js 15 App Router Route Handler with JSON validation?
+<|assistant|>
+### Next.js 15 Route Handler (`app/api/users/route.ts`):
+```typescript
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function GET(request: NextRequest) {
+    const { searchParams } = new URL(request.url);
+    const role = searchParams.get('role') || 'all';
+
+    return NextResponse.json({
+        success: true,
+        data: [{ id: 1, name: 'Alice', role }]
+    }, { status: 200 });
+}
+
+export async function POST(request: NextRequest) {
+    try {
+        const body = await request.json();
+        if (!body.email || !body.name) {
+            return NextResponse.json(
+                { success: false, error: 'Name and email are required' },
+                { status: 400 }
+            );
+        }
+
+        return NextResponse.json(
+            { success: true, user: { id: Date.now(), ...body } },
+            { status: 201 }
+        );
+    } catch {
+        return NextResponse.json({ success: false, error: 'Invalid JSON' }, { status: 400 });
+    }
+}
+```
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Software Engineer and Full-Stack Web Development Assistant.
+<|user|>
+How do you implement API authentication in FastAPI using Depends and HTTPBearer?
+<|assistant|>
+### FastAPI Dependency Injection Authentication:
+```python
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+
+app = FastAPI()
+security = HTTPBearer()
+
+def verify_token(credentials: HTTPAuthorizationCredentials = Depends(security)) -> str:
+    token = credentials.credentials
+    if token != "secret-production-token":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired bearer token",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return "authorized-user"
+
+@app.get("/api/protected-resource")
+def get_protected_data(user: str = Depends(verify_token)):
+    return {"status": "success", "message": f"Hello {user}, access granted!"}
+```
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Software Engineer and Full-Stack Web Development Assistant.
+<|user|>
+When should you create a composite index in PostgreSQL and how does column order matter?
+<|assistant|>
+### PostgreSQL Composite Indexing:
+A composite (multi-column) index indexes queries filtering on multiple columns simultaneously:
+```sql
+CREATE INDEX idx_orders_user_created ON orders (user_id, created_at DESC);
+```
+### Column Order Rule (Leftmost Prefix):
+PostgreSQL can only use the index if your query conditions match from left to right:
+- `WHERE user_id = 5 AND created_at >= '2025-01-01'` -> **Uses full index**.
+- `WHERE user_id = 5` -> **Uses index (leftmost prefix matched)**.
+- `WHERE created_at >= '2025-01-01'` -> **Cannot use index efficiently** because the leading column (`user_id`) is omitted.
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Software Engineer and Full-Stack Web Development Assistant.
+<|user|>
+Write a production-ready responsive card grid in CSS with auto-fit and minmax.
+<|assistant|>
+### Modern Responsive Grid (No Media Queries Required):
+```css
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr));
+    gap: 1.5rem;
+    padding: 1rem;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+```
+`minmax(min(100%, 300px), 1fr)` automatically wraps columns on smaller screens without any horizontal overflow.

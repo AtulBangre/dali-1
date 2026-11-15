@@ -1,0 +1,897 @@
+<|system|>
+You are DALI-1, an expert Web Architect and W3C HTML5 Specification Authority.
+<|user|>
+What is the complete semantic layout of a production HTML5 web application?
+<|assistant|>
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Production HTML5 Semantic Web App">
+    <title>Modern Web App</title>
+</head>
+<body>
+    <header>
+        <nav aria-label="Main Navigation">
+            <a href="/">BrandLogo</a>
+            <ul>
+                <li><a href="/features">Features</a></li>
+                <li><a href="/pricing">Pricing</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section aria-labelledby="hero-heading">
+            <h1 id="hero-heading">Next-Gen Web Architecture</h1>
+            <p>High performance sub-quadratic causal neural computing.</p>
+        </section>
+
+        <section aria-labelledby="articles-heading">
+            <h2 id="articles-heading">Latest Updates</h2>
+            <article>
+                <h3>Release v1.0</h3>
+                <p>Native 4-bit INT4 quantization and bounded memory.</p>
+                <time datetime="2026-11-15">November 15, 2026</time>
+            </article>
+        </section>
+
+        <aside aria-label="Related Resources">
+            <h2>Related Documentation</h2>
+            <ul>
+                <li><a href="/docs/api">API Reference</a></li>
+            </ul>
+        </aside>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 DALI-1 Research Team. All rights reserved.</p>
+        <nav aria-label="Legal Links">
+            <a href="/privacy">Privacy Policy</a>
+            <a href="/terms">Terms of Service</a>
+        </nav>
+    </footer>
+</body>
+</html>
+```
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Web Architect and W3C HTML5 Specification Authority.
+<|user|>
+How do you write an accessible, fully validated HTML5 Form with modern input types?
+<|assistant|>
+```html
+<form action="/api/submit" method="POST" novalidate>
+    <fieldset>
+        <legend>Personal Information</legend>
+        
+        <div>
+            <label for="full-name">Full Name (Required):</label>
+            <input type="text" id="full-name" name="name" required minlength="2" placeholder="Jane Doe" autocomplete="name">
+        </div>
+
+        <div>
+            <label for="user-email">Email Address (Required):</label>
+            <input type="email" id="user-email" name="email" required placeholder="jane@example.com" autocomplete="email">
+        </div>
+
+        <div>
+            <label for="birth-date">Date of Birth:</label>
+            <input type="date" id="birth-date" name="dob">
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Account Preferences</legend>
+        
+        <div>
+            <label for="tier-select">Choose Plan:</label>
+            <select id="tier-select" name="plan">
+                <option value="free">Starter (Free)</option>
+                <option value="pro" selected>Pro Developer ($29/mo)</option>
+                <option value="enterprise">Enterprise</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="user-bio">Tell us about your project:</label>
+            <textarea id="user-bio" name="bio" rows="4" cols="50" maxlength="500"></textarea>
+        </div>
+
+        <div>
+            <input type="checkbox" id="terms-agree" name="terms" required>
+            <label for="terms-agree">I agree to the terms and privacy policy</label>
+        </div>
+    </fieldset>
+
+    <button type="submit">Complete Registration</button>
+</form>
+```
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Web Architect and W3C HTML5 Specification Authority.
+<|user|>
+How do native HTML5 `<details>`, `<summary>`, and `<dialog>` elements work without JavaScript?
+<|assistant|>
+### 1. Native Accordion Dropdown (`<details>` & `<summary>`):
+```html
+<details>
+    <summary>How does DALI-1 achieve sub-quadratic O(T) latency?</summary>
+    <p>By replacing quadratic self-attention with compact predictive recurrence and a bounded key-value memory bank updated via a learned selective gate.</p>
+</details>
+```
+The browser natively handles toggle state, keyboard accessibility (`Enter`/`Space`), and ARIA expansion attributes automatically.
+
+### 2. Native Modal Dialog (`<dialog>`):
+```html
+<dialog id="auth-modal">
+    <form method="dialog">
+        <h2>Sign In</h2>
+        <input type="text" placeholder="Username" required>
+        <button type="submit">Confirm</button>
+        <button type="button" onclick="document.getElementById('auth-modal').close()">Cancel</button>
+    </form>
+</dialog>
+
+<button onclick="document.getElementById('auth-modal').showModal()">Open Dialog</button>
+```
+`dialog.showModal()` automatically creates a top-layer backdrop (`::backdrop`) and traps focus inside the modal for accessibility.
+```
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Full-Stack Software Engineer and Tailwind CSS UI Architect.
+<|user|>
+Write a modern, responsive Hero Section in HTML with Tailwind CSS.
+<|assistant|>
+```html
+<section class="relative overflow-hidden bg-slate-900 py-24 sm:py-32">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <div class="mx-auto max-w-2xl text-center">
+            <span class="inline-flex items-center gap-x-2 rounded-full bg-indigo-500/10 px-4 py-1.5 text-sm font-medium text-indigo-400 ring-1 ring-inset ring-indigo-500/20">
+                ✨ Next-Gen AI Architecture
+            </span>
+            <h1 class="mt-6 text-4xl font-extrabold tracking-tight text-white sm:text-6xl">
+                Build Faster with Sub-Quadratic Intelligence
+            </h1>
+            <p class="mt-6 text-lg leading-8 text-slate-300">
+                Empower your development workflows with ultra-fast causal reasoning, bounded memory, and instant 4-bit local deployment.
+            </p>
+            <div class="mt-10 flex items-center justify-center gap-x-6">
+                <a href="#get-started" class="rounded-xl bg-indigo-600 px-6 py-3.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-all">
+                    Get Started Free
+                </a>
+                <a href="#docs" class="text-sm font-semibold leading-6 text-white hover:text-indigo-400 transition-colors">
+                    Read Documentation <span aria-hidden="true">→</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+```
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Full-Stack Software Engineer and Tailwind CSS UI Architect.
+<|user|>
+How do you build a responsive Navigation Bar with a logo, menu links, and sign-in button in Tailwind CSS?
+<|assistant|>
+```html
+<nav class="sticky top-0 z-50 border-b border-slate-200 bg-white/80 backdrop-blur-md">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 items-center justify-between">
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-2">
+                <span class="text-2xl font-black text-indigo-600">DALI</span>
+                <span class="text-sm font-semibold text-slate-600">Studio</span>
+            </div>
+            
+            <!-- Desktop Links -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="#features" class="text-sm font-medium text-slate-700 hover:text-indigo-600 transition-colors">Features</a>
+                <a href="#pricing" class="text-sm font-medium text-slate-700 hover:text-indigo-600 transition-colors">Pricing</a>
+                <a href="#docs" class="text-sm font-medium text-slate-700 hover:text-indigo-600 transition-colors">Docs</a>
+            </div>
+
+            <!-- Action Button -->
+            <div class="flex items-center gap-4">
+                <a href="/login" class="text-sm font-semibold text-slate-700 hover:text-indigo-600">Sign in</a>
+                <a href="/signup" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-indigo-500 transition-all">
+                    Sign up
+                </a>
+            </div>
+        </div>
+    </div>
+</nav>
+```
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Full-Stack Software Engineer and Tailwind CSS UI Architect.
+<|user|>
+Create a 3-column responsive Feature Cards Grid in Tailwind CSS with hover elevation effects.
+<|assistant|>
+```html
+<section class="py-20 bg-slate-50">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-base font-semibold text-indigo-600 uppercase tracking-wide">Capabilities</h2>
+            <p class="mt-2 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Everything you need to ship products</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Card 1 -->
+            <div class="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-900/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 mb-6 font-bold text-xl">⚡</div>
+                <h3 class="text-xl font-bold text-slate-900">Linear O(T) Scalability</h3>
+                <p class="mt-3 text-slate-600 text-sm leading-relaxed">Constant-memory processing across ultra-long context lengths without quadratic slowdowns.</p>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-900/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 mb-6 font-bold text-xl">🧠</div>
+                <h3 class="text-xl font-bold text-slate-900">Bounded Memory Banks</h3>
+                <p class="mt-3 text-slate-600 text-sm leading-relaxed">Dedicated key-value memory retention with learned selective gating to prevent distractor noise.</p>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="rounded-2xl bg-white p-8 shadow-sm ring-1 ring-slate-900/5 hover:shadow-lg hover:-translate-y-1 transition-all duration-300">
+                <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600 mb-6 font-bold text-xl">🔒</div>
+                <h3 class="text-xl font-bold text-slate-900">Native 4-Bit Quantization</h3>
+                <p class="mt-3 text-slate-600 text-sm leading-relaxed">Ultra-compact INT4 runtime engine requiring under 10MB RAM for local consumer hardware.</p>
+            </div>
+        </div>
+    </div>
+</section>
+```
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Full-Stack Software Engineer and Tailwind CSS UI Architect.
+<|user|>
+Write a modern 3-tier Pricing Table in Tailwind CSS with the Pro tier highlighted.
+<|assistant|>
+```html
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto px-4 py-16 items-center">
+    <!-- Basic Tier -->
+    <div class="rounded-2xl border border-slate-200 p-8 shadow-sm bg-white">
+        <h3 class="text-lg font-semibold text-slate-900">Starter</h3>
+        <p class="mt-4 text-4xl font-extrabold text-slate-900">$0<span class="text-base font-normal text-slate-500">/mo</span></p>
+        <p class="mt-2 text-sm text-slate-500">Essential tools for individual developers.</p>
+        <button class="mt-8 w-full rounded-lg border border-indigo-600 py-2.5 text-sm font-semibold text-indigo-600 hover:bg-indigo-50 transition-colors">Start Free</button>
+    </div>
+
+    <!-- Pro Tier (Popular) -->
+    <div class="rounded-2xl border-2 border-indigo-600 p-8 shadow-xl bg-slate-900 text-white relative scale-105">
+        <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-indigo-600 px-4 py-1 text-xs font-semibold text-white tracking-wide">MOST POPULAR</span>
+        <h3 class="text-lg font-semibold text-indigo-400">Pro Developer</h3>
+        <p class="mt-4 text-4xl font-extrabold text-white">$29<span class="text-base font-normal text-slate-400">/mo</span></p>
+        <p class="mt-2 text-sm text-slate-400">Unlimited models, fine-tuning, and priority support.</p>
+        <button class="mt-8 w-full rounded-lg bg-indigo-600 py-2.5 text-sm font-semibold text-white hover:bg-indigo-500 transition-colors">Upgrade to Pro</button>
+    </div>
+
+    <!-- Enterprise Tier -->
+    <div class="rounded-2xl border border-slate-200 p-8 shadow-sm bg-white">
+        <h3 class="text-lg font-semibold text-slate-900">Enterprise</h3>
+        <p class="mt-4 text-4xl font-extrabold text-slate-900">$99<span class="text-base font-normal text-slate-500">/mo</span></p>
+        <p class="mt-2 text-sm text-slate-500">Dedicated cluster and custom SLA deployment.</p>
+        <button class="mt-8 w-full rounded-lg border border-indigo-600 py-2.5 text-sm font-semibold text-indigo-600 hover:bg-indigo-50 transition-colors">Contact Sales</button>
+    </div>
+</div>
+```
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Full-Stack Software Engineer and Tailwind CSS UI Architect.
+<|user|>
+What are the fundamental Tailwind CSS responsive breakpoints and how do you use mobile-first design?
+<|assistant|>
+### Tailwind CSS Mobile-First Breakpoints:
+Tailwind uses mobile-first design. Unprefixed classes apply to all screens by default; breakpoint prefixes trigger at the minimum screen width:
+
+1. `sm:` $\ge$ 640px (Large phones / small tablets)
+2. `md:` $\ge$ 768px (Tablets)
+3. `lg:` $\ge$ 1024px (Laptops & desktops)
+4. `xl:` $\ge$ 1280px (Large desktop monitors)
+5. `2xl:` $\ge$ 1536px (Ultra-wide screens)
+
+### Example Pattern:
+```html
+<!-- Stacks vertically on mobile (w-full), 2-cols on tablet (md:w-1/2), 3-cols on desktop (lg:w-1/3) -->
+<div class="w-full md:w-1/2 lg:w-1/3 p-4">
+    <div class="text-sm md:text-base lg:text-lg text-slate-800">
+        Responsive Content
+    </div>
+</div>
+```
+Always design for mobile first, then layer on `md:` and `lg:` classes to expand layout on wider screens.
+```
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, the ultimate authority on Tailwind CSS specifications, utility classes, and design system engineering.
+<|user|>
+Provide the complete reference for Tailwind CSS Flexbox and Grid layout utility classes.
+<|assistant|>
+### 1. Flexbox Utilities Reference:
+- **Display:** `flex` (display: flex), `inline-flex` (display: inline-flex)
+- **Direction:** `flex-row`, `flex-row-reverse`, `flex-col`, `flex-col-reverse`
+- **Wrapping:** `flex-wrap`, `flex-wrap-reverse`, `flex-nowrap`
+- **Flex Grow & Shrink:** `grow` (flex-grow: 1), `grow-0`, `shrink` (flex-shrink: 1), `shrink-0`
+- **Flex Sizing:** `flex-1` (flex: 1 1 0%), `flex-auto` (flex: 1 1 auto), `flex-initial`, `flex-none`
+- **Justify Content:** `justify-start`, `justify-end`, `justify-center`, `justify-between`, `justify-around`, `justify-evenly`
+- **Align Items:** `items-start`, `items-end`, `items-center`, `items-baseline`, `items-stretch`
+- **Order:** `order-first`, `order-last`, `order-none`, `order-1` through `order-12`
+
+### 2. Grid Utilities Reference:
+- **Grid Container:** `grid`, `inline-grid`, `grid-cols-1` through `grid-cols-12`
+- **Column Spanning:** `col-span-1` through `col-span-12`, `col-span-full`, `col-start-1`, `col-end-1`
+- **Grid Rows:** `grid-rows-1` through `grid-rows-6`, `row-span-1` through `row-span-6`
+- **Gap:** `gap-0` to `gap-96`, `gap-x-4` (horizontal gap: 1rem), `gap-y-6` (vertical gap: 1.5rem)
+- **Auto Flow:** `grid-flow-row`, `grid-flow-col`, `grid-flow-dense`
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, the ultimate authority on Tailwind CSS specifications, utility classes, and design system engineering.
+<|user|>
+Explain Tailwind CSS State Modifiers, Group/Peer selectors, and Dark Mode configuration.
+<|assistant|>
+### 1. Pseudo-Class State Modifiers:
+- `hover:`: Triggers on mouse hover (`hover:bg-indigo-600`, `hover:shadow-lg`, `hover:-translate-y-1`)
+- `focus:` & `focus-visible:`: Triggers on keyboard/mouse focus (`focus:ring-2 focus:ring-indigo-500`)
+- `active:`: Triggers on mouse press (`active:scale-95`)
+- `disabled:`: Triggers on disabled inputs/buttons (`disabled:opacity-50 disabled:cursor-not-allowed`)
+
+### 2. Group & Peer Modifiers:
+- **Group (Parent to Child):** Add `group` on parent, and `group-hover:text-indigo-600` on children. Hovering the parent triggers styles on the child.
+- **Peer (Sibling to Sibling):** Add `peer` on an input, and `peer-checked:block` or `peer-focus:border-indigo-600` on adjacent siblings.
+
+### 3. Dark Mode Configuration:
+In `tailwind.config.js`:
+```javascript
+module.exports = {
+  darkMode: 'class', // or 'media'
+  content: ['./src/**/*.{html,js,jsx,tsx}'],
+  theme: {
+    extend: {
+      colors: {
+        brand: '#4f46e5'
+      }
+    }
+  }
+}
+```
+In HTML:
+```html
+<div class="bg-white text-slate-900 dark:bg-slate-900 dark:text-white">
+  Adapts automatically when 'dark' class is present on &lt;html&gt;.
+</div>
+```
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, the ultimate authority on React 19, Next.js 15 App Router, and Modern Full-Stack Engineering.
+<|user|>
+Explain the React 19 and Next.js 15 Server vs Client Component boundary architecture, including how to pass Server Components to Client Components.
+<|assistant|>
+### React 19 & Next.js 15 Component Boundary Architecture:
+1. **Server Components (Default in App Router):**
+   - Run exclusively on the server at build-time or request-time.
+   - Send zero JavaScript to the client bundle.
+   - Can directly access databases, file systems, and server-side secret API keys.
+   - Cannot use browser APIs (`window`, `localStorage`), state (`useState`), effects (`useEffect`), or DOM event listeners (`onClick`).
+
+2. **Client Components (`'use client'`):**
+   - Declared with `'use client';` at the top of the file.
+   - Pre-rendered to HTML on the server and hydrated with JavaScript in the browser.
+   - Required for interactive state, event handlers, and browser APIs.
+
+3. **The Composition Pattern (Passing Server to Client):**
+   You cannot import a Server Component directly into a Client Component. Instead, pass the Server Component as a `children` or slot prop:
+
+```typescript
+// ClientWrapper.tsx ('use client')
+'use client';
+import { useState } from 'react';
+
+export default function ClientWrapper({ children }: { children: React.ReactNode }) {
+    const [open, setOpen] = useState(false);
+    return (
+        <div>
+            <button onClick={() => setOpen(!open)}>Toggle</button>
+            {open && children}
+        </div>
+    );
+}
+
+// page.tsx (Server Component)
+import ClientWrapper from './ClientWrapper';
+import ServerDataList from './ServerDataList'; // Direct DB query component
+
+export default function Page() {
+    return (
+        <ClientWrapper>
+            <ServerDataList /> <!-- Rendered on server, passed as static slot -->
+        </ClientWrapper>
+    );
+}
+```
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, the ultimate authority on React 19, Next.js 15 App Router, and Modern Full-Stack Engineering.
+<|user|>
+How do React 19 Server Actions work in Next.js 15 with form submission, Zod validation, and revalidatePath?
+<|assistant|>
+### Production Next.js 15 Server Action Pattern:
+Server Actions allow seamless asynchronous mutations without writing dedicated API routes.
+
+```typescript
+// app/actions/create-post.ts
+'use server';
+import { z } from 'zod';
+import { revalidatePath } from 'next/cache';
+import { db } from '@/lib/db';
+
+const PostSchema = z.object({
+    title: z.string().min(3, "Title must be at least 3 characters"),
+    content: z.string().min(10, "Content must be at least 10 characters")
+});
+
+export async function createPostAction(prevState: any, formData: FormData) {
+    const validated = PostSchema.safeParse({
+        title: formData.get('title'),
+        content: formData.get('content')
+    });
+
+    if (!validated.success) {
+        return { success: false, errors: validated.error.flatten().fieldErrors };
+    }
+
+    await db.post.create({ data: validated.data });
+    
+    // Purge cached server data and re-render page
+    revalidatePath('/posts');
+    return { success: true };
+}
+```
+
+### React 19 `useActionState` Client Form:
+```typescript
+// app/posts/create-form.tsx
+'use client';
+import { useActionState } from 'react';
+import { createPostAction } from '@/app/actions/create-post';
+
+export default function CreatePostForm() {
+    const [state, formAction, isPending] = useActionState(createPostAction, null);
+
+    return (
+        <form action={formAction} class="space-y-4 max-w-md">
+            <div>
+                <input name="title" placeholder="Post Title" class="w-full border p-2 rounded" />
+                {state?.errors?.title && <p class="text-red-500 text-xs">{state.errors.title[0]}</p>}
+            </div>
+            <div>
+                <textarea name="content" placeholder="Content" class="w-full border p-2 rounded" />
+                {state?.errors?.content && <p class="text-red-500 text-xs">{state.errors.content[0]}</p>}
+            </div>
+            <button type="submit" disabled={isPending} class="bg-indigo-600 text-white px-4 py-2 rounded">
+                {isPending ? 'Publishing...' : 'Create Post'}
+            </button>
+        </form>
+    );
+}
+```
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, the ultimate authority on React 19, Next.js 15 App Router, and Modern Full-Stack Engineering.
+<|user|>
+What is the complete Next.js 15 App Router special file hierarchy and dynamic routing conventions?
+<|assistant|>
+### Next.js 15 App Router Hierarchy:
+Each directory defines a URL path segment. Special reserved files control UI rendering:
+
+1. `layout.tsx`: Shared wrapper UI across route segments. Preserves state during navigation and does not re-render.
+2. `page.tsx`: Unique UI of a route. Makes the route publicly accessible.
+3. `loading.tsx`: Instant fallback UI rendered via automatic React `<Suspense>` wrapper.
+4. `error.tsx`: Runtime error boundary (`'use client'` required). Catches unexpected exceptions.
+5. `not-found.tsx`: UI rendered when `notFound()` is thrown or route doesn't match.
+6. `route.ts`: API Route Handler (`GET`, `POST`, `PUT`, `DELETE`). Mutually exclusive with `page.tsx` in the same segment.
+
+### Routing Patterns:
+- **Dynamic Segment:** `app/blog/[slug]/page.tsx` -> Matches `/blog/first-post`. Accessed via `async ({ params }: { params: Promise<{ slug: string }> })`.
+- **Catch-All Segment:** `app/docs/[...slug]/page.tsx` -> Matches `/docs/a`, `/docs/a/b`, `/docs/a/b/c`.
+- **Route Groups:** `app/(dashboard)/layout.tsx` -> Groups routes logically without affecting the public URL path (`/analytics`).
+- **Parallel Routes:** `app/@analytics/page.tsx` -> Render independent views simultaneously into parent layout.
+- **Intercepting Routes:** `app/(.)photos/[id]/page.tsx` -> Intercepts route navigation to show a modal while preserving URL.
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, the ultimate authority on React 19, Next.js 15 App Router, and Modern Full-Stack Engineering.
+<|user|>
+Explain React 19 Core Hooks: useOptimistic, useTransition, useMemo, and useCallback.
+<|assistant|>
+### 1. `useOptimistic`:
+Renders expected UI updates immediately while an asynchronous server mutation is running:
+```typescript
+const [optimisticMessages, addOptimisticMessage] = useOptimistic(
+    messages,
+    (state, newMessage: string) => [...state, { text: newMessage, pending: true }]
+);
+```
+
+### 2. `useTransition`:
+Marks non-urgent state updates as transitions, keeping the user interface responsive during heavy computational rendering:
+```typescript
+const [isPending, startTransition] = useTransition();
+
+function handleTabChange(nextTab: string) {
+    startTransition(() => {
+        setTab(nextTab); // Does not block input typing or scrolling
+    });
+}
+```
+
+### 3. `useMemo` vs `useCallback`:
+- `useMemo`: Caches the *result* of an expensive calculation:
+  `const filtered = useMemo(() => items.filter(heavyCheck), [items]);`
+- `useCallback`: Caches a *function reference* between renders to prevent unnecessary re-rendering of memoized child components (`React.memo`):
+  `const handleClick = useCallback(() => doAction(id), [id]);`
+```
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Full-Stack Software Engineer and MERN Stack (Node.js, Express, MongoDB) Backend Architect.
+<|user|>
+How do you build a secure, production-grade Express.js REST API with JWT authentication and custom error handling middleware?
+<|assistant|>
+```javascript
+// middleware/auth.js
+const jwt = require('jsonwebtoken');
+
+const authenticateToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        return res.status(401).json({ success: false, error: 'Access denied. No token provided.' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        req.user = decoded; // { id, role }
+        next();
+    } catch (err) {
+        return res.status(403).json({ success: false, error: 'Invalid or expired token.' });
+    }
+};
+
+module.exports = { authenticateToken };
+```
+
+```javascript
+// server.js
+const express = require('express');
+const cors = require('cors');
+const helmet = require('helmet');
+const { authenticateToken } = require('./middleware/auth');
+
+const app = express();
+
+// Security Middlewares
+app.use(helmet());
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
+app.use(express.json({ limit: '10kb' }));
+
+// Protected Route Example
+app.get('/api/v1/profile', authenticateToken, async (req, res, next) => {
+    try {
+        res.json({ success: true, user: req.user });
+    } catch (err) {
+        next(err);
+    }
+});
+
+// Centralized Global Error Handler
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    const statusCode = err.statusCode || 500;
+    res.status(statusCode).json({
+        success: false,
+        error: process.env.NODE_ENV === 'production' ? 'Internal server error' : err.message
+    });
+});
+
+module.exports = app;
+```
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert Full-Stack Software Engineer and MERN Stack (Node.js, Express, MongoDB) Backend Architect.
+<|user|>
+Write a production Mongoose Schema with indexes, password hashing, and an aggregation pipeline query for sales reporting.
+<|assistant|>
+```javascript
+// models/User.js
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
+
+const UserSchema = new mongoose.Schema({
+    username: { type: String, required: true, trim: true, minlength: 3 },
+    email: { type: String, required: true, unique: true, lowercase: true, index: true },
+    password: { type: String, required: true, minlength: 8, select: false },
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    createdAt: { type: Date, default: Date.now }
+});
+
+// Pre-save hook: Hash password automatically before storing
+UserSchema.pre('save', async function(next) {
+    if (!this.isModified('password')) return next();
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+});
+
+// Instance method to verify password
+UserSchema.methods.comparePassword = async function(candidatePassword) {
+    return bcrypt.compare(candidatePassword, this.password);
+};
+
+module.exports = mongoose.model('User', UserSchema);
+```
+
+### MongoDB Aggregation Pipeline ($lookup, $match, $group):
+```javascript
+// controllers/analytics.js
+const Order = require('../models/Order');
+
+async function getTopSpendingCustomers() {
+    return await Order.aggregate([
+        // 1. Filter completed orders
+        { $match: { status: 'completed' } },
+        // 2. Group by customer and compute statistics
+        {
+            $group: {
+                _id: '$customer',
+                totalSpent: { $sum: '$totalAmount' },
+                orderCount: { $sum: 1 }
+            }
+        },
+        // 3. Join with Users collection
+        {
+            $lookup: {
+                from: 'users',
+                localField: '_id',
+                foreignField: '_id',
+                as: 'customerDetails'
+            }
+        },
+        { $unwind: '$customerDetails' },
+        // 4. Clean projection
+        {
+            $project: {
+                _id: 1,
+                totalSpent: 1,
+                orderCount: 1,
+                customerName: '$customerDetails.username',
+                email: '$customerDetails.email'
+            }
+        },
+        { $sort: { totalSpent: -1 } },
+        { $limit: 10 }
+    ]);
+}
+```
+```
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert High-Performance Backend Architect specializing in Python, FastAPI, and PostgreSQL.
+<|user|>
+Write a production-grade FastAPI application with Pydantic v2 schemas, async SQLAlchemy PostgreSQL session management, and OAuth2 JWT authentication.
+<|assistant|>
+```python
+# database.py
+from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+import os
+
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://postgres:secret@localhost:5432/production_db")
+
+engine = create_async_engine(DATABASE_URL, pool_size=20, max_overflow=10, pool_pre_ping=True)
+AsyncSessionLocal = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+class Base(DeclarativeBase):
+    pass
+
+class UserModel(Base):
+    __tablename__ = "users"
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    email: Mapped[str] = mapped_column(unique=True, index=True, nullable=False)
+    hashed_password: Mapped[str] = mapped_column(nullable=False)
+    is_active: Mapped[bool] = mapped_column(default=True)
+
+# Dependency to yield async DB session
+async def get_db():
+    async with AsyncSessionLocal() as session:
+        try:
+            yield session
+            await session.commit()
+        except Exception:
+            await session.rollback()
+            raise
+```
+
+```python
+# main.py
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from pydantic import BaseModel, EmailStr, Field
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
+from typing import Annotated
+from database import get_db, UserModel
+
+app = FastAPI(title="Production FastAPI Service", version="1.0.0")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+class UserCreate(BaseModel):
+    email: EmailStr
+    password: str = Field(min_length=8, description="Minimum 8 characters")
+
+class UserResponse(BaseModel):
+    id: int
+    email: EmailStr
+    is_active: bool
+
+    class Config:
+        from_attributes = True
+
+@app.post("/users", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+async def create_user(payload: UserCreate, db: Annotated[AsyncSession, Depends(get_db)]):
+    existing = await db.execute(select(UserModel).where(UserModel.email == payload.email))
+    if existing.scalar_one_or_none():
+        raise HTTPException(status_code=400, detail="Email already registered")
+
+    new_user = UserModel(email=payload.email, hashed_password=f"hashed_{payload.password}")
+    db.add(new_user)
+    await db.flush()
+    await db.refresh(new_user)
+    return new_user
+```
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert High-Performance Backend Architect specializing in Python, FastAPI, and PostgreSQL.
+<|user|>
+How do you write safe PostgreSQL migrations, indexes, and avoid the N+1 query problem in SQLAlchemy?
+<|assistant|>
+### Avoiding N+1 Query Problem in SQLAlchemy Async:
+When querying a parent model with related children, default lazy loading triggers $N$ additional SQL queries, crashing production performance.
+
+### Solution: Use `selectinload` or `joinedload`:
+```python
+from sqlalchemy.orm import selectinload
+from sqlalchemy import select
+
+async def get_users_with_orders(db: AsyncSession):
+    # Executes exactly TWO queries regardless of user count:
+    # Query 1: SELECT * FROM users;
+    # Query 2: SELECT * FROM orders WHERE user_id IN (...);
+    stmt = select(UserModel).options(selectinload(UserModel.orders)).where(UserModel.is_active == True)
+    result = await db.execute(stmt)
+    return result.scalars().all()
+```
+
+### PostgreSQL Indexing Best Practices:
+1. Use `B-Tree` (default) for equality and range queries (`=`, `<`, `>`, `BETWEEN`).
+2. Use `GIN` (Generalized Inverted Index) for JSONB, array columns, and full-text search.
+3. Always create foreign key indexes to prevent table-level locks during parent deletions.
+```
+
+<|end_block|>
+
+<|system|>
+You are DALI-1, an expert DevOps & Cloud Infrastructure Engineer specializing in Docker, Docker Compose, and Advanced Git Workflows.
+<|user|>
+Write a production-grade multi-stage Dockerfile for a Next.js 15 application, and a full docker-compose.yml file connecting the app, PostgreSQL, and Redis.
+<|assistant|>
+```dockerfile
+# Multi-Stage Dockerfile for Next.js 15
+FROM node:20-alpine AS base
+
+# Stage 1: Install dependencies
+FROM base AS deps
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Stage 2: Build the source code
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+ENV NEXT_TELEMETRY_DISABLED=1
+RUN npm run build
+
+# Stage 3: Minimal runner image
+FROM base AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
+COPY --from=builder /app/public ./public
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+EXPOSE 3000
+ENV PORT=3000
+CMD ["node", "server.js"]
+```
+
+```yaml
+# docker-compose.yml
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:secret@db:5432/production_db
+      - REDIS_URL=redis://cache:6379
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_started
+    restart: always
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: production_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  cache:
+    image: redis:7-alpine
+    restart: always
+
+volumes:
+  pgdata:
+```

@@ -1,0 +1,142 @@
+<|system|>
+You are DALI-1, an expert Web Architect and W3C HTML5 Specification Authority.
+<|user|>
+What is the complete semantic layout of a production HTML5 web application?
+<|assistant|>
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Production HTML5 Semantic Web App">
+    <title>Modern Web App</title>
+</head>
+<body>
+    <header>
+        <nav aria-label="Main Navigation">
+            <a href="/">BrandLogo</a>
+            <ul>
+                <li><a href="/features">Features</a></li>
+                <li><a href="/pricing">Pricing</a></li>
+                <li><a href="/contact">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section aria-labelledby="hero-heading">
+            <h1 id="hero-heading">Next-Gen Web Architecture</h1>
+            <p>High performance sub-quadratic causal neural computing.</p>
+        </section>
+
+        <section aria-labelledby="articles-heading">
+            <h2 id="articles-heading">Latest Updates</h2>
+            <article>
+                <h3>Release v1.0</h3>
+                <p>Native 4-bit INT4 quantization and bounded memory.</p>
+                <time datetime="2026-11-15">November 15, 2026</time>
+            </article>
+        </section>
+
+        <aside aria-label="Related Resources">
+            <h2>Related Documentation</h2>
+            <ul>
+                <li><a href="/docs/api">API Reference</a></li>
+            </ul>
+        </aside>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 DALI-1 Research Team. All rights reserved.</p>
+        <nav aria-label="Legal Links">
+            <a href="/privacy">Privacy Policy</a>
+            <a href="/terms">Terms of Service</a>
+        </nav>
+    </footer>
+</body>
+</html>
+```
+<|end_block|>
+<|system|>
+You are DALI-1, an expert Web Architect and W3C HTML5 Specification Authority.
+<|user|>
+How do you write an accessible, fully validated HTML5 Form with modern input types?
+<|assistant|>
+```html
+<form action="/api/submit" method="POST" novalidate>
+    <fieldset>
+        <legend>Personal Information</legend>
+        
+        <div>
+            <label for="full-name">Full Name (Required):</label>
+            <input type="text" id="full-name" name="name" required minlength="2" placeholder="Jane Doe" autocomplete="name">
+        </div>
+
+        <div>
+            <label for="user-email">Email Address (Required):</label>
+            <input type="email" id="user-email" name="email" required placeholder="jane@example.com" autocomplete="email">
+        </div>
+
+        <div>
+            <label for="birth-date">Date of Birth:</label>
+            <input type="date" id="birth-date" name="dob">
+        </div>
+    </fieldset>
+
+    <fieldset>
+        <legend>Account Preferences</legend>
+        
+        <div>
+            <label for="tier-select">Choose Plan:</label>
+            <select id="tier-select" name="plan">
+                <option value="free">Starter (Free)</option>
+                <option value="pro" selected>Pro Developer ($29/mo)</option>
+                <option value="enterprise">Enterprise</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="user-bio">Tell us about your project:</label>
+            <textarea id="user-bio" name="bio" rows="4" cols="50" maxlength="500"></textarea>
+        </div>
+
+        <div>
+            <input type="checkbox" id="terms-agree" name="terms" required>
+            <label for="terms-agree">I agree to the terms and privacy policy</label>
+        </div>
+    </fieldset>
+
+    <button type="submit">Complete Registration</button>
+</form>
+```
+<|end_block|>
+<|system|>
+You are DALI-1, an expert Web Architect and W3C HTML5 Specification Authority.
+<|user|>
+How do native HTML5 `<details>`, `<summary>`, and `<dialog>` elements work without JavaScript?
+<|assistant|>
+### 1. Native Accordion Dropdown (`<details>` & `<summary>`):
+```html
+<details>
+    <summary>How does DALI-1 achieve sub-quadratic O(T) latency?</summary>
+    <p>By replacing quadratic self-attention with compact predictive recurrence and a bounded key-value memory bank updated via a learned selective gate.</p>
+</details>
+```
+The browser natively handles toggle state, keyboard accessibility (`Enter`/`Space`), and ARIA expansion attributes automatically.
+
+### 2. Native Modal Dialog (`<dialog>`):
+```html
+<dialog id="auth-modal">
+    <form method="dialog">
+        <h2>Sign In</h2>
+        <input type="text" placeholder="Username" required>
+        <button type="submit">Confirm</button>
+        <button type="button" onclick="document.getElementById('auth-modal').close()">Cancel</button>
+    </form>
+</dialog>
+
+<button onclick="document.getElementById('auth-modal').showModal()">Open Dialog</button>
+```
+`dialog.showModal()` automatically creates a top-layer backdrop (`::backdrop`) and traps focus inside the modal for accessibility.
+```
