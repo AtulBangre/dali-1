@@ -98,27 +98,89 @@ class DALICodeAgent:
         return "\n---\n".join([item[1] for item in top])
 
     def execute_instruction(self, user_prompt: str) -> str:
-        """Agentic Execution Loop"""
-        prompt_lower = user_prompt.lower()
+        """Agentic Execution Loop with Natural Language Intent Dispatching"""
+        prompt_trimmed = user_prompt.strip()
+        prompt_lower = prompt_trimmed.lower()
 
-        # Check for command intent
-        if user_prompt.startswith("/run "):
-            cmd = user_prompt[5:].strip()
+        # 1. Direct Slash Commands
+        if prompt_trimmed.startswith("/run "):
+            cmd = prompt_trimmed[5:].strip()
             return f"[$ {cmd}]\n" + self.run_command(cmd)
 
-        if user_prompt.startswith("/read "):
-            path = user_prompt[6:].strip()
+        if prompt_trimmed.startswith("/read "):
+            path = prompt_trimmed[6:].strip()
             return f"[File: {path}]\n" + self.read_file(path)
 
-        if user_prompt.startswith("/search "):
-            q = user_prompt[8:].strip()
+        if prompt_trimmed.startswith("/search "):
+            q = prompt_trimmed[8:].strip()
             return f"[RAG Knowledge Results for '{q}']:\n" + self.search_knowledge(q)
 
-        # Context Augmented Synthesis (RAG)
-        rag_context = self.search_knowledge(user_prompt)
-        prompt_formatted = f"<|system|>\nYou are DALI-Code, an autonomous coding agent.\nRelevant Documentation:\n{rag_context[:300]}\n<|user|>\n{user_prompt}\n<|assistant|>"
+        # 2. Natural Language Intent: Create / Make Folder / Directory
+        folder_match = re.search(r"(?:make|create|mkdir)\s+(?:a\s+)?(?:folder|directory)?\s*(?:named?\s+|called\s+)?([A-Za-z0-9_.-]+)", prompt_trimmed, re.I)
+        if folder_match and any(w in prompt_lower for w in ["folder", "directory", "mkdir"]):
+            folder_name = folder_match.group(1).strip()
+            if folder_name.lower() in ["folder", "directory", "a", "the"]:
+                # Try finding token after 'named' or 'called'
+                parts = prompt_trimmed.split()
+                if "name" in parts:
+                    folder_name = parts[parts.index("name") + 1]
+                elif "named" in parts:
+                    folder_name = parts[parts.index("named") + 1]
+            try:
+                os.makedirs(folder_name, exist_ok=True)
+                abs_path = os.path.abspath(folder_name)
+                return f"✓ Created folder '{folder_name}' successfully!\n  Path: {abs_path}"
+            except Exception as e:
+                return f"Error creating folder '{folder_name}': {e}"
 
-        response = generate_response(self.model, self.tokenizer, prompt_formatted, max_new_tokens=140, temperature=0.2, top_k=2)
+        # 3. Natural Language Intent: List / Show Files
+        if any(phrase in prompt_lower for phrase in ["list files", "show files", "what files", "ls", "dir", "show directory"]):
+            try:
+                items = sorted(os.listdir("."))
+                folders = [f"{i}/" for i in items if os.path.isdir(i) and not i.startswith(".")]
+                files = [i for i in items if os.path.isfile(i) and not i.startswith(".")]
+                output = ["Current Directory Contents:"]
+                if folders:
+                    output.append("  [Directories]: " + ", ".join(folders))
+                if files:
+                    output.append("  [Files]:       " + ", ".join(files[:20]))
+                    if len(files) > 20:
+                        output.append(f"  ... and {len(files) - 20} more files.")
+                return "\n".join(output)
+            except Exception as e:
+                return f"Error listing directory: {e}"
+
+        # 4. Natural Language Intent: Read / View File
+        read_match = re.search(r"(?:read|view|show|open|cat)\s+(?:file\s+)?([A-Za-z0-9_./\\-]+\.[a-zA-Z0-9]+)", prompt_trimmed, re.I)
+        if read_match:
+            filepath = read_match.group(1).strip()
+            return f"[File: {filepath}]\n" + self.read_file(filepath)
+
+        # 5. Natural Language Intent: Delete File / Folder
+        del_match = re.search(r"(?:delete|remove|rm)\s+(?:(?:folder|directory|file)\s+)?([A-Za-z0-9_.-]+)", prompt_trimmed, re.I)
+        if del_match and any(w in prompt_lower for w in ["delete", "remove", "rm"]):
+            target = del_match.group(1).strip()
+            if os.path.isdir(target):
+                import shutil
+                shutil.rmtree(target)
+                return f"✓ Removed directory '{target}'."
+            elif os.path.isfile(target):
+                os.remove(target)
+                return f"✓ Removed file '{target}'."
+            else:
+                return f"Error: '{target}' not found."
+
+        # 6. Natural Language Intent: Build Website / Project
+        if any(w in prompt_lower for w in ["build website", "create website", "make website", "build fullstack", "create app"]):
+            from build_fullstack_app import generate_fullstack_project
+            proj_dir = generate_fullstack_project(prompt_trimmed)
+            return f"✓ Full-stack project generated at: {proj_dir}"
+
+        # 7. Code Knowledge & Technical Question: Augmented by RAG
+        rag_context = self.search_knowledge(prompt_trimmed)
+        prompt_formatted = f"<|user|>\n{prompt_trimmed}\n<|assistant|>"
+
+        response = generate_response(self.model, self.tokenizer, prompt_formatted, max_new_tokens=120, temperature=0.2, top_k=2)
         return response
 
 def main():
