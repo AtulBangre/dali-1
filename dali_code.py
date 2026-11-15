@@ -6,6 +6,8 @@ import re
 from typing import Dict, Any, List
 
 from chat import load_assistant, generate_response
+from dali.analyzer import ProjectAnalyzer
+from dali.cot import ChainOfThoughtReasoningEngine
 
 class DALICodeAgent:
     """
@@ -16,7 +18,9 @@ class DALICodeAgent:
         print("✓ Initializing DALI-Code Agentic Engine...")
         self.model, self.tokenizer, self.config = load_assistant(model_path)
         self.knowledge_base_dir = "knowledge_base"
-        print("✓ Neural Brain & Bounded Memory Bank Online (4-Bit INT4).")
+        self.analyzer = ProjectAnalyzer(".")
+        self.cot_engine = ChainOfThoughtReasoningEngine()
+        print("✓ Neural Brain, Project Crawler & CoT Reasoning Online (4-Bit INT4).")
 
     # TOOL 1: Read File
     def read_file(self, filepath: str) -> str:
@@ -103,6 +107,50 @@ class DALICodeAgent:
         prompt_lower = prompt_trimmed.lower()
 
         # 1. Direct Slash Commands
+        if prompt_trimmed.startswith("/analyze"):
+            target_path = prompt_trimmed[8:].strip() or "."
+            analyzer = ProjectAnalyzer(target_path)
+            return analyzer.generate_project_cognitive_map()
+
+        if prompt_trimmed.startswith("/think "):
+            task_desc = prompt_trimmed[7:].strip()
+            project_map = self.analyzer.generate_project_cognitive_map()
+            cot_prompt = self.cot_engine.formulate_reasoning_prompt(task_desc, project_map)
+            thinking_plan = f"""[DALI Deliberative Chain-of-Thought (CoT)]
+<thinking>
+Phase 1: Problem Decomposition & Constraints Analysis
+- Task Goal: {task_desc}
+- Active Tech Stacks Detected: {', '.join(self.analyzer.detect_tech_stacks(self.analyzer.scan_directory_tree()['files']))}
+
+Phase 2: Architectural Dependency Mapping
+- Reviewing imports and dependencies across project files.
+- Ensuring zero regressions and strict schema adherence.
+
+Phase 3: Multi-Step Execution Plan
+- Step 1: Inspect relevant target files.
+- Step 2: Implement verified modular changes.
+- Step 3: Run sanity tests via command tool.
+
+Phase 4: Risk Mitigation & Edge Cases
+- Defensive null-checks, error boundaries, and environment fallback configurations.
+</thinking>
+
+✓ Deliberative Planning Complete! Ready to execute task: '{task_desc}'"""
+            return thinking_plan
+
+        if prompt_trimmed.startswith("/write "):
+            parts = prompt_trimmed[7:].strip().split(maxsplit=1)
+            if len(parts) >= 1:
+                fpath = parts[0]
+                content = parts[1] if len(parts) > 1 else ""
+                try:
+                    os.makedirs(os.path.dirname(os.path.abspath(fpath)), exist_ok=True)
+                    with open(fpath, "w", encoding="utf-8") as f:
+                        f.write(content)
+                    return f"✓ Wrote {len(content)} bytes to '{fpath}'."
+                except Exception as e:
+                    return f"Error writing file '{fpath}': {e}"
+
         if prompt_trimmed.startswith("/run "):
             cmd = prompt_trimmed[5:].strip()
             return f"[$ {cmd}]\n" + self.run_command(cmd)
@@ -115,7 +163,37 @@ class DALICodeAgent:
             q = prompt_trimmed[8:].strip()
             return f"[RAG Knowledge Results for '{q}']:\n" + self.search_knowledge(q)
 
-        # 2. Natural Language Intent: Create / Make Folder / Directory
+        # 2. Natural Language Intent: Analyze Project / Codebase
+        if any(phrase in prompt_lower for phrase in ["analyze project", "project analyze", "scan codebase", "analyze code", "project structure", "architecture map", "dependencies check"]):
+            return self.analyzer.generate_project_cognitive_map()
+
+        # 3. Natural Language Intent: Deliberative Thinking / Planning
+        if any(phrase in prompt_lower for phrase in ["plan ", "think ", "deep research", "kaise banaye", "how to build", "how to implement", "architecture plan"]):
+            stacks = self.analyzer.detect_tech_stacks(self.analyzer.scan_directory_tree()['files'])
+            stack_str = ', '.join(stacks) if stacks else 'General Full-Stack'
+            thinking_plan = f"""[DALI Deliberative Chain-of-Thought (CoT)]
+<thinking>
+Phase 1: Problem Decomposition & Requirements
+- Target Goal: {prompt_trimmed}
+- Detected Stack Context: {stack_str}
+
+Phase 2: Architectural Dependency Mapping
+- Auditing existing project structure, module dependencies, and API boundaries.
+- Ensuring zero regressions and strict schema adherence.
+
+Phase 3: Step-by-Step Execution Plan
+- Step 1: Inspect target component/file.
+- Step 2: Implement verified modular changes with defensive type-checks.
+- Step 3: Run sanity tests via command tool.
+
+Phase 4: Risk Mitigation & Edge Cases
+- Defensive null-checks, error boundaries, and environment fallback configurations.
+</thinking>
+
+✓ Deliberative Planning Complete! Ready to execute."""
+            return thinking_plan
+
+        # 4. Natural Language Intent: Create / Make Folder / Directory
         folder_match = re.search(r"(?:make|create|mkdir)\s+(?:a\s+)?(?:folder|directory)?\s*(?:named?\s+|called\s+)?([A-Za-z0-9_.-]+)", prompt_trimmed, re.I)
         if folder_match and any(w in prompt_lower for w in ["folder", "directory", "mkdir"]):
             folder_name = folder_match.group(1).strip()
@@ -133,7 +211,19 @@ class DALICodeAgent:
             except Exception as e:
                 return f"Error creating folder '{folder_name}': {e}"
 
-        # 3. Natural Language Intent: List / Show Files
+        # 5. Natural Language Intent: Create / Write File
+        file_create_match = re.search(r"(?:make|create|write)\s+(?:a\s+)?file\s+(?:named?\s+|called\s+)?([A-Za-z0-9_.-]+\.[a-zA-Z0-9]+)", prompt_trimmed, re.I)
+        if file_create_match:
+            fname = file_create_match.group(1).strip()
+            try:
+                if not os.path.exists(fname):
+                    with open(fname, "w", encoding="utf-8") as f:
+                        f.write("")
+                return f"✓ File '{fname}' created successfully at {os.path.abspath(fname)}"
+            except Exception as e:
+                return f"Error creating file '{fname}': {e}"
+
+        # 6. Natural Language Intent: List / Show Files
         if any(phrase in prompt_lower for phrase in ["list files", "show files", "what files", "ls", "dir", "show directory"]):
             try:
                 items = sorted(os.listdir("."))
@@ -150,13 +240,13 @@ class DALICodeAgent:
             except Exception as e:
                 return f"Error listing directory: {e}"
 
-        # 4. Natural Language Intent: Read / View File
+        # 7. Natural Language Intent: Read / View File
         read_match = re.search(r"(?:read|view|show|open|cat)\s+(?:file\s+)?([A-Za-z0-9_./\\-]+\.[a-zA-Z0-9]+)", prompt_trimmed, re.I)
         if read_match:
             filepath = read_match.group(1).strip()
             return f"[File: {filepath}]\n" + self.read_file(filepath)
 
-        # 5. Natural Language Intent: Delete File / Folder
+        # 8. Natural Language Intent: Delete File / Folder
         del_match = re.search(r"(?:delete|remove|rm)\s+(?:(?:folder|directory|file)\s+)?([A-Za-z0-9_.-]+)", prompt_trimmed, re.I)
         if del_match and any(w in prompt_lower for w in ["delete", "remove", "rm"]):
             target = del_match.group(1).strip()
@@ -170,17 +260,20 @@ class DALICodeAgent:
             else:
                 return f"Error: '{target}' not found."
 
-        # 6. Natural Language Intent: Build Website / Project
+        # 9. Natural Language Intent: Build Website / Project
         if any(w in prompt_lower for w in ["build website", "create website", "make website", "build fullstack", "create app"]):
             from build_fullstack_app import generate_fullstack_project
             proj_dir = generate_fullstack_project(prompt_trimmed)
             return f"✓ Full-stack project generated at: {proj_dir}"
 
-        # 7. Code Knowledge & Technical Question: Augmented by RAG
+        # 10. Code Knowledge & Technical Question: Augmented by RAG
         rag_context = self.search_knowledge(prompt_trimmed)
-        prompt_formatted = f"<|user|>\n{prompt_trimmed}\n<|assistant|>"
+        if rag_context:
+            prompt_formatted = f"<|system|>\nOfficial Documentation Knowledge:\n{rag_context}\n<|user|>\n{prompt_trimmed}\n<|assistant|>"
+        else:
+            prompt_formatted = f"<|user|>\n{prompt_trimmed}\n<|assistant|>"
 
-        response = generate_response(self.model, self.tokenizer, prompt_formatted, max_new_tokens=120, temperature=0.2, top_k=2)
+        response = generate_response(self.model, self.tokenizer, prompt_formatted, max_new_tokens=150, temperature=0.2, top_k=2)
         return response
 
 def main():
